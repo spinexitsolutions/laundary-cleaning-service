@@ -268,11 +268,6 @@ section { position: relative; }
 .pc-1 { left: 2%; top: 0; transform: rotate(-6deg); width: 25%; }
 .pc-2 { left: -2%; bottom: 2%; transform: rotate(5deg); width: 29%; }
 .pc-2 img { aspect-ratio: 4 / 3; }
-.ring-badge { position: absolute; right: 0; top: 0; width: 22%; aspect-ratio: 1; z-index: 4; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; box-shadow: var(--shadow); }
-.ring-badge > svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 18s linear infinite; }
-.ring-badge text { font: 600 9.5px var(--f-mono); letter-spacing: 2.4px; fill: var(--paper); }
-.ring-badge span { width: 40%; aspect-ratio: 1; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
-.ring-badge span .ic { width: 55%; height: 55%; color: #fff; }
 .ticket {
   position: absolute; background: var(--card); color: var(--ink);
   border-radius: 14px; padding: 14px 18px 14px 16px; box-shadow: var(--shadow);

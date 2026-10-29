@@ -104,7 +104,6 @@ const GROUPS = [
       { name: 'hero_photo_2_caption', label: 'Photo card 2 caption', type: 'text', default: 'Folded & fresh' },
       { name: 'hero_rating', label: 'Rating badge text', type: 'text', default: '4.9 · 12,400+ reviews' },
       { name: 'hero_ticket_text', label: 'Floating ticket text', type: 'text', default: 'Ready for delivery' },
-      { name: 'hero_ring_text', label: 'Rotating badge text', type: 'text', default: 'PICK UP · WASH · DRY · PRESS · FOLD · DELIVER · ' },
     ],
   },
   {

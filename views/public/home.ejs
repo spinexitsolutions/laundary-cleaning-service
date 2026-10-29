@@ -63,11 +63,6 @@
         </svg>
       <% } %>
 
-      <div class="ring-badge" aria-hidden="true">
-        <svg viewBox="0 0 120 120"><defs><path id="rb" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
-          <text><textPath href="#rb"><%= (s.hero_ring_text || '').repeat(3).slice(0, 52) %></textPath></text></svg>
-        <span><%- icon('sparkles') %></span>
-      </div>
 
       <div class="ticket ticket-b"><span class="tick alt"><%- icon('truck') %></span><div><span class="mono">VALET · 10:00–12:00</span><b>Pickup on the way</b></div></div>
       <div class="ticket ticket-a"><span class="tick"><%- icon('check') %></span><div><span class="mono">ORDER #<%= s.order_prefix %>-2041</span><b><%= s.hero_ticket_text %></b></div></div>
