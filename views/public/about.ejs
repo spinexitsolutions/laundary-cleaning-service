@@ -5,7 +5,7 @@
     <div class="prose rv"><%- s.about_body %></div>
     <div>
       <% if (s.about_image) { %><img src="<%= s.about_image %>" alt="" style="border-radius:28px;width:100%;object-fit:cover"><% } else { %>
-      <div class="machine" style="width:100%"><div class="machine-body"><div class="machine-door"><div class="machine-glass"><div class="drum"><i class="cloth c1"></i><i class="cloth c2"></i><i class="cloth c3"></i><i class="cloth c4"></i></div><div class="water"></div></div></div><span class="machine-hinge"></span></div></div>
+      <div class="wm-wrap" style="max-width:420px;margin:0 auto"><%- include('../partials/washer', { uid: 'about', img: '' }) %></div>
       <% } %>
     </div>
   </div>

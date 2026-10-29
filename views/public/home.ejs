@@ -21,27 +21,54 @@
       </div>
     </div>
 
-    <div class="machine" aria-hidden="true">
-      <svg class="machine-ring" viewBox="0 0 400 400">
-        <defs><path id="ringPath" d="M200,200 m-186,0 a186,186 0 1,1 372,0 a186,186 0 1,1 -372,0"/></defs>
-        <text><textPath href="#ringPath"><%= (s.hero_ring_text || '').repeat(3).slice(0, 120) %></textPath></text>
-      </svg>
-      <div class="machine-body">
-        <div class="machine-door">
-          <div class="machine-glass">
-            <% if (s.hero_image) { %>
-              <img src="<%= s.hero_image %>" alt="">
-            <% } else { %>
-              <div class="drum"><i class="cloth c1"></i><i class="cloth c2"></i><i class="cloth c3"></i><i class="cloth c4"></i></div>
-              <div class="water"></div>
-              <% [[18,10,0],[42,7,1.2],[66,12,2.1],[30,6,3.3],[78,8,4.2],[55,5,.6]].forEach(([l, sz, d]) => { %>
-                <i class="bubble" style="left:<%= l %>%;width:<%= sz %>%;height:<%= sz %>%;animation-delay:<%= d %>s"></i>
-              <% }) %>
-            <% } %>
-          </div>
-        </div>
-        <span class="machine-hinge"></span>
+    <div class="hero-art">
+      <div class="hero-blob" aria-hidden="true"></div>
+      <div class="hero-floor" aria-hidden="true"></div>
+
+      <% if (s.hero_photo_1) { %>
+        <figure class="photo-card pc-1"><img src="<%= s.hero_photo_1 %>" alt="<%= s.hero_photo_1_caption || '' %>"><% if (s.hero_photo_1_caption) { %><figcaption><%= s.hero_photo_1_caption %></figcaption><% } %></figure>
+      <% } else { %>
+        <svg class="prop-hanger" viewBox="0 0 160 220" aria-hidden="true">
+          <line x1="80" y1="0" x2="80" y2="22" stroke="var(--line-strong)" stroke-width="1.5"/>
+          <path d="M80 22 c-8 0 -10 -10 -4 -14 c6 -4 12 2 10 8 c-2 5 -6 7 -6 12 v6" fill="none" stroke="#8b939e" stroke-width="3" stroke-linecap="round"/>
+          <path d="M80 34 L12 70 a6 6 0 0 0 3 11 h130 a6 6 0 0 0 3 -11 Z" fill="none" stroke="#8b939e" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M48 52 L18 70 L8 112 L30 118 L36 98 V206 H124 V98 L130 118 L152 112 L142 70 L112 52 C108 62 96 68 80 68 C64 68 52 62 48 52 Z" fill="#fff" stroke="#d9dde3" stroke-width="1.5"/>
+          <path d="M66 54 L80 76 L94 54" fill="none" stroke="#d9dde3" stroke-width="1.5"/>
+          <path d="M80 76 V206" stroke="#e6e9ee" stroke-width="1.5"/>
+          <g fill="#c9cfd7"><circle cx="86" cy="96" r="2.2"/><circle cx="86" cy="122" r="2.2"/><circle cx="86" cy="148" r="2.2"/><circle cx="86" cy="174" r="2.2"/></g>
+          <rect x="96" y="108" width="20" height="20" rx="3" fill="none" stroke="#e1e5ea" stroke-width="1.5"/>
+          <path d="M112 132 l10 -4 l2 26 l-10 -2 Z" fill="var(--accent)"/>
+        </svg>
+      <% } %>
+
+      <div class="wm-wrap"><%- include('../partials/washer', { uid: 'hero', img: s.hero_image }) %></div>
+
+      <% if (s.hero_photo_2) { %>
+        <figure class="photo-card pc-2"><img src="<%= s.hero_photo_2 %>" alt="<%= s.hero_photo_2_caption || '' %>"><% if (s.hero_photo_2_caption) { %><figcaption><%= s.hero_photo_2_caption %></figcaption><% } %></figure>
+      <% } else { %>
+        <svg class="prop-towels" viewBox="0 0 200 170" aria-hidden="true">
+          <ellipse cx="100" cy="160" rx="92" ry="8" fill="#0b1424" opacity=".14"/>
+          <% [['#FFFFFF','#E6E2D8',118],['#FFD9C9','#F2B9A3',86],['#DCE6FB','#B9C9F0',54],['#E1F1E8','#B9DCC8',22]].forEach(([f, sh, y], i) => { %>
+            <g transform="translate(<%= [14, 8, 18, 10][i] %> 0)">
+              <rect x="0" y="<%= y %>" width="170" height="36" rx="12" fill="<%= f %>" stroke="<%= sh %>" stroke-width="1.5"/>
+              <path d="M10 <%= y + 10 %> h150" stroke="<%= sh %>" stroke-width="1.2" stroke-dasharray="2 4"/>
+              <rect x="136" y="<%= y %>" width="34" height="36" rx="12" fill="<%= sh %>" opacity=".55"/>
+            </g>
+          <% }) %>
+          <g transform="translate(118 8) rotate(8)">
+            <path d="M0 6 a6 6 0 0 1 6 -6 h34 l12 12 l-12 12 h-34 a6 6 0 0 1 -6 -6 Z" fill="var(--ink)"/>
+            <circle cx="40" cy="12" r="3" fill="#fff"/>
+            <text x="18" y="16" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" font-weight="600">FRESH</text>
+          </g>
+        </svg>
+      <% } %>
+
+      <div class="ring-badge" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><defs><path id="rb" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+          <text><textPath href="#rb"><%= (s.hero_ring_text || '').repeat(3).slice(0, 52) %></textPath></text></svg>
+        <span><%- icon('sparkles') %></span>
       </div>
+
       <div class="ticket ticket-b"><span class="tick alt"><%- icon('truck') %></span><div><span class="mono">VALET · 10:00–12:00</span><b>Pickup on the way</b></div></div>
       <div class="ticket ticket-a"><span class="tick"><%- icon('check') %></span><div><span class="mono">ORDER #<%= s.order_prefix %>-2041</span><b><%= s.hero_ticket_text %></b></div></div>
     </div>
