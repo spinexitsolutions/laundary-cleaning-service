@@ -1,0 +1,8 @@
+<section class="page-hero">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">Home</a> / <span><%= crumb %></span></div>
+    <h1 class="h-page rv"><%- H.emph(heading) %></h1>
+    <% if (typeof lead !== 'undefined' && lead) { %><p class="lead rv rv-d1"><%= lead %></p><% } %>
+  </div>
+  <div class="care-deco" aria-hidden="true"><%- care('wash') %><%- care('iron') %><%- care('dryclean') %></div>
+</section>

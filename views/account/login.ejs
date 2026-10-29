@@ -1,0 +1,29 @@
+<%- include('../partials/top') %>
+<section class="auth-wrap">
+  <div class="auth-art">
+    <%- care('dry') %>
+    <span class="kicker" style="color:rgba(255,255,255,.7)">Your account</span>
+    <h1 class="h-section" style="max-width:12ch">Every order, <em>tracked</em> in one place.</h1>
+    <div style="display:grid;gap:14px;max-width:360px">
+      <% ['Track orders live','Save addresses for 1-tap booking','Download invoices anytime'].forEach(t => { %><div style="display:flex;gap:12px;align-items:center"><%- icon('check') %> <%= t %></div><% }) %>
+    </div>
+  </div>
+  <div class="auth-form">
+    <div class="auth-switch"><a href="/account/login<%= next ? '?next=' + encodeURIComponent(next) : '' %>" class="<%= mode === 'login' ? 'on' : '' %>">Sign in</a><a href="/account/register<%= next ? '?next=' + encodeURIComponent(next) : '' %>" class="<%= mode === 'register' ? 'on' : '' %>">Create account</a></div>
+    <h2 class="h-section" style="font-size:2.8rem;margin-bottom:10px"><%- mode === 'login' ? 'Welcome <em>back.</em>' : 'Join in <em>30 seconds.</em>' %></h2>
+    <p style="color:var(--muted);margin:0 0 30px"><%= mode === 'login' ? 'Sign in with your phone number or email.' : 'Booked before as a guest? Use the same phone number — your past orders will appear.' %></p>
+    <form method="post" action="/account/<%= mode %>" style="display:grid;gap:16px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="next" value="<%= next %>">
+      <% if (mode === 'login') { %>
+        <div class="field"><label for="l">Phone or email</label><input id="l" name="login" required autocomplete="username"></div>
+      <% } else { %>
+        <div class="field"><label for="n">Full name</label><input id="n" name="name" required autocomplete="name"></div>
+        <div class="field"><label for="p">Phone</label><input id="p" name="phone" type="tel" required autocomplete="tel"></div>
+        <div class="field"><label for="e">Email (optional)</label><input id="e" name="email" type="email" autocomplete="email"></div>
+      <% } %>
+      <div class="field"><label for="pw">Password</label><input id="pw" name="password" type="password" required minlength="<%= mode === 'register' ? 6 : 1 %>" autocomplete="<%= mode === 'login' ? 'current-password' : 'new-password' %>"></div>
+      <button class="btn btn-block" style="margin-top:8px"><%= mode === 'login' ? 'Sign in' : 'Create account' %> <span class="btn-dot"><%- icon('arrow') %></span></button>
+    </form>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

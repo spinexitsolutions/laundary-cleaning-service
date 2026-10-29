@@ -1,0 +1,33 @@
+<%- include('_top') %>
+<div class="toolbar"><a href="/admin/customers" class="b ghost"><%- icon('arrow-left') %>Customers</a><div class="sp"></div><a href="/admin/orders/new?customer=<%= c.id %>" class="b dark"><%- icon('plus') %>New order for <%= c.name.split(' ')[0] %></a></div>
+<div class="grid g-main">
+  <div class="card">
+    <div class="card-h"><h2>Orders (<%= orders.length %>)</h2><div class="sp"></div><b class="mono"><%= H.money(orders.filter(o => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0)) %></b></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <tbody>
+      <% if (!orders.length) { %><tr><td class="empty">No orders yet.</td></tr><% } %>
+      <% orders.forEach(o => { %><tr class="row-link" data-href="/admin/orders/<%= o.id %>"><td><b class="mono"><%= o.order_no %></b><br><small class="muted"><%= H.fmtDate(o.created_at) %></small></td><td><small><%= o.services %></small></td><td><%- include('_status', { status: o.status }) %></td><td class="r mono"><b><%= H.money(o.total) %></b></td></tr><% }) %>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="grid">
+    <form class="card" method="post" action="/admin/customers/<%= c.id %>">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="card-h"><span class="av-sm"><%= H.initials(c.name) %></span><h2><%= c.name %></h2></div>
+      <div class="card-b" style="display:grid;gap:12px">
+        <div class="fld"><label>Name</label><input name="name" value="<%= c.name %>" required></div>
+        <div class="fld"><label>Phone</label><input value="<%= c.phone %>" disabled></div>
+        <div class="fld"><label>Email</label><input name="email" value="<%= c.email || '' %>"></div>
+        <div class="fld"><label>Address</label><textarea name="address" style="min-height:60px"><%= c.address || '' %></textarea></div>
+        <div class="fld"><label>Pincode</label><input name="pincode" value="<%= c.pincode || '' %>"></div>
+        <div class="fld"><label>Internal notes</label><textarea name="notes" style="min-height:60px" placeholder="Preferences, allergies, VIP…"><%= c.notes || '' %></textarea></div>
+        <div class="fld"><label>Set new password</label><input name="password" type="password" placeholder="Leave empty to keep" autocomplete="new-password"></div>
+        <label class="chk"><input type="checkbox" name="is_active" value="1" <%= c.is_active ? 'checked' : '' %>> Account active</label>
+        <button class="b dark" style="justify-content:center">Save customer</button>
+      </div>
+    </form>
+    <% if (addresses.length) { %><div class="card"><div class="card-h"><h2>Saved addresses</h2></div><div class="card-b"><% addresses.forEach(a => { %><p style="margin:0 0 10px"><b><%= a.label %>:</b> <%= a.address %> — <%= a.pincode %></p><% }) %></div></div><% } %>
+    <% if (admin.role === 'admin') { %><form method="post" action="/admin/customers/<%= c.id %>/delete" onsubmit="return confirm('Delete this customer? Orders are kept.')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b danger" style="width:100%;justify-content:center"><%- icon('trash') %>Delete customer</button></form><% } %>
+  </div>
+</div>
+<%- include('_bottom') %>

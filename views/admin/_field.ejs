@@ -1,0 +1,64 @@
+<%
+  // f = field def, v = current value, ICON_NAMES, opts (resolved options)
+  const id = 'f_' + f.name;
+  const wide = !f.half || ['richtext', 'image', 'repeater', 'icon', 'code'].includes(f.type);
+%>
+<div class="fld <%= wide ? 'full' : '' %>">
+<% if (f.type === 'checkbox') { %>
+  <label class="chk"><input type="checkbox" name="<%= f.name %>" value="1" <%= String(v) === '1' ? 'checked' : '' %>> <%= f.label %></label>
+<% } else { %>
+  <label for="<%= id %>"><%= f.label %><%= f.required ? ' *' : '' %></label>
+  <% if (f.type === 'textarea') { %>
+    <textarea id="<%= id %>" name="<%= f.name %>" <%= f.required ? 'required' : '' %>><%= v ?? '' %></textarea>
+  <% } else if (f.type === 'code') { %>
+    <textarea id="<%= id %>" name="<%= f.name %>" class="mono" style="font-size:12px"><%= v ?? '' %></textarea>
+  <% } else if (f.type === 'richtext') { %>
+    <div class="rte" data-rte>
+      <div class="rte-bar">
+        <button type="button" data-cmd="bold"><b>B</b></button><button type="button" data-cmd="italic"><i>I</i></button><button type="button" data-cmd="underline"><u>U</u></button>
+        <button type="button" data-block="h2">H2</button><button type="button" data-block="h3">H3</button><button type="button" data-block="p">¶</button>
+        <button type="button" data-cmd="insertUnorderedList">• List</button><button type="button" data-cmd="insertOrderedList">1. List</button>
+        <button type="button" data-block="blockquote">❝</button><button type="button" data-link>Link</button><button type="button" data-img>Image</button>
+        <button type="button" data-cmd="removeFormat">Clear</button><span style="flex:1"></span><button type="button" data-src>&lt;/&gt; HTML</button>
+      </div>
+      <div class="rte-ed" contenteditable="true"></div>
+      <textarea name="<%= f.name %>" id="<%= id %>"><%= v ?? '' %></textarea>
+    </div>
+  <% } else if (f.type === 'select') { %>
+    <select id="<%= id %>" name="<%= f.name %>"><% if (!f.required) { %><option value="">—</option><% } %><% opts.forEach(o => { %><option value="<%= o.value %>" <%= String(v) === String(o.value) ? 'selected' : '' %>><%= o.label %></option><% }) %></select>
+  <% } else if (f.type === 'image') { %>
+    <div class="img-in">
+      <div class="prev"><% if (v) { %><img src="<%= v %>" alt=""><% } else { %><%- icon('image') %><% } %></div>
+      <div class="ctl">
+        <input type="file" name="<%= f.name %>" accept="image/*" data-imgfile>
+        <div class="row"><input class="in" name="<%= f.name %>" value="<%= v || '' %>" placeholder="…or paste an image URL" style="flex:1;min-width:160px"><button type="button" class="b sm" data-pick-media>Media library</button><% if (v) { %><label class="chk" style="padding:0;font-size:12px"><input type="checkbox" name="<%= f.name %>__remove" value="1"> Remove</label><% } %></div>
+      </div>
+    </div>
+  <% } else if (f.type === 'icon') { %>
+    <div class="icon-pick"><% ICON_NAMES.forEach(n => { %><label title="<%= n %>"><input type="radio" name="<%= f.name %>" value="<%= n %>" <%= v === n ? 'checked' : '' %>><span><%- icon(n) %></span></label><% }) %></div>
+  <% } else if (f.type === 'color') { %>
+    <div class="color-in"><input type="color" value="<%= v || '#000000' %>" oninput="this.nextElementSibling.value=this.value"><input class="in mono" id="<%= id %>" name="<%= f.name %>" value="<%= v || '' %>" oninput="if(/^#[0-9a-f]{6}$/i.test(this.value))this.previousElementSibling.value=this.value"></div>
+  <% } else if (f.type === 'repeater') { const rows = Array.isArray(v) ? v : []; %>
+    <div data-repeater="<%= f.name %>">
+      <div data-rows>
+      <% rows.forEach(row => { %>
+        <div class="rep-row"><% f.subfields.forEach(sf => { %>
+          <div class="fld"><label><%= sf.label %></label>
+            <% if (sf.type === 'textarea') { %><textarea name="<%= f.name %>__<%= sf.name %>"><%= row[sf.name] || '' %></textarea>
+            <% } else if (sf.type === 'icon') { %><select name="<%= f.name %>__<%= sf.name %>"><% ICON_NAMES.forEach(n => { %><option <%= row[sf.name] === n ? 'selected' : '' %>><%= n %></option><% }) %></select>
+            <% } else { %><input name="<%= f.name %>__<%= sf.name %>" value="<%= row[sf.name] || '' %>"><% } %>
+          </div><% }) %>
+          <button type="button" class="b ib ghost rm" data-rep-rm aria-label="Remove"><%- icon('trash') %></button>
+        </div>
+      <% }) %>
+      </div>
+      <template><div class="rep-row"><% f.subfields.forEach(sf => { %><div class="fld"><label><%= sf.label %></label><% if (sf.type === 'textarea') { %><textarea name="<%= f.name %>__<%= sf.name %>"></textarea><% } else if (sf.type === 'icon') { %><select name="<%= f.name %>__<%= sf.name %>"><% ICON_NAMES.forEach(n => { %><option><%= n %></option><% }) %></select><% } else { %><input name="<%= f.name %>__<%= sf.name %>"><% } %></div><% }) %><button type="button" class="b ib ghost rm" data-rep-rm aria-label="Remove"><%- icon('trash') %></button></div></template>
+      <button type="button" class="b sm" data-rep-add><%- icon('plus') %>Add row</button>
+    </div>
+  <% } else if (f.type === 'password') { %>
+    <input id="<%= id %>" name="<%= f.name %>" type="password" autocomplete="new-password">
+  <% } else { %>
+    <input id="<%= id %>" name="<%= f.name %>" type="<%= { number: 'number', date: 'date', time: 'time' }[f.type] || 'text' %>" <%= f.type === 'number' ? 'step=any' : '' %> value="<%= v ?? '' %>" <%= f.required ? 'required' : '' %> placeholder="<%= f.placeholder || (f.type === 'slug' ? 'auto-generated from title' : '') %>" <%= f.upper ? 'style=text-transform:uppercase' : '' %>>
+  <% } %>
+<% } %>
+</div>

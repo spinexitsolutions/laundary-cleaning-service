@@ -1,0 +1,59 @@
+<%- include('../partials/top') %>
+<section class="page-hero">
+  <div class="wrap svc-hero">
+    <div>
+      <div class="crumbs"><a href="/">Home</a> / <a href="/services">Services</a> / <span><%= service.title %></span></div>
+      <h1 class="h-page rv"><%= service.title %></h1>
+      <p class="lead rv rv-d1"><%= service.tagline %>. <%= service.short_desc %></p>
+      <div class="hero-ctas rv rv-d2" style="margin-top:32px">
+        <a href="/book?service=<%= service.id %>" class="btn">Book <%= service.title %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+      </div>
+    </div>
+    <div class="svc-badge rv" style="background:<%= service.color %>">
+      <% if (service.image) { %><img src="<%= service.image %>" alt="<%= service.title %>"><% } else { %><%- icon(service.icon) %><% } %>
+    </div>
+  </div>
+</section>
+<section class="section-tight">
+  <div class="wrap svc-layout">
+    <div>
+      <div class="prose"><%- service.content %></div>
+      <% if (items.length) { let cat = null; %>
+      <h2 class="h-section" style="font-size:2.4rem;margin:56px 0 20px">Price list</h2>
+      <div class="table-scroll"><table class="price-table">
+        <thead><tr><th>Item</th><th>Unit</th><th>Price</th></tr></thead>
+        <tbody>
+        <% items.forEach(it => { if (it.cat !== cat) { cat = it.cat; %><tr class="cat-row"><td colspan="3"><%= cat || 'Other' %></td></tr><% } %>
+          <tr><td><%= it.name %></td><td class="mono" style="color:var(--muted)"><%= it.unit %></td><td class="p"><%= H.money(it.price) %></td></tr>
+        <% }) %>
+        </tbody>
+      </table></div>
+      <% } %>
+    </div>
+    <aside class="svc-aside">
+      <div class="card">
+        <span class="label">Price</span>
+        <div style="font-family:var(--f-display);font-size:3rem;letter-spacing:-.03em;margin:6px 0 4px"><%= H.money(service.pricing_mode === 'per_kg' ? service.price_per_kg : service.starting_price) %><small class="mono" style="font-size:.9rem;color:var(--muted)"> /<%= service.pricing_mode === 'per_kg' ? 'kg' : 'item onwards' %></small></div>
+        <p style="color:var(--muted);margin:0 0 20px">Turnaround: <b style="color:var(--ink)"><%= service.turnaround %></b></p>
+        <ul class="feature-list"><% H.lines(service.features).forEach(f => { %><li><%- icon('check') %><%= f %></li><% }) %></ul>
+        <a href="/book?service=<%= service.id %>" class="btn btn-block" style="margin-top:26px">Schedule pickup <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+      </div>
+      <a class="help-card" style="margin:0" href="https://wa.me/<%= s.whatsapp %>" target="_blank" rel="noopener"><%- icon('whatsapp') %><div><small>Questions about a garment?</small><b>Chat on WhatsApp</b></div></a>
+    </aside>
+  </div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <span class="kicker">More services</span>
+    <div class="tags" style="margin-top:50px">
+      <% others.forEach((sv, i) => { %>
+      <a href="/services/<%= sv.slug %>" class="tag-card" style="--tc:<%= sv.color %>;min-height:320px">
+        <span class="hole"></span><span class="tag-icon"><%- icon(sv.icon) %></span>
+        <h3 class="h-card"><%= sv.title %></h3><p><%= sv.short_desc %></p>
+        <div class="tag-foot"><div class="tag-price"><small>From</small><b><%= H.money(sv.pricing_mode === 'per_kg' ? sv.price_per_kg : sv.starting_price) %></b></div><span class="tag-go"><%- icon('arrow-up-right') %></span></div>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

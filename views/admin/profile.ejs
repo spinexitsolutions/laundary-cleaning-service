@@ -1,0 +1,13 @@
+<%- include('_top') %>
+<form class="card" method="post" action="/admin/profile" style="max-width:560px">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="card-h"><span class="av-sm"><%= H.initials(admin.name) %></span><h2><%= admin.email %></h2><div class="sp"></div><span class="pill" style="--c:#2B44E0"><%= admin.role %></span></div>
+  <div class="card-b" style="display:grid;gap:14px">
+    <div class="fld"><label>Name</label><input name="name" value="<%= admin.name %>"></div>
+    <div class="form-sec">Change password</div>
+    <div class="fld"><label>Current password</label><input type="password" name="current" autocomplete="current-password"></div>
+    <div class="fld"><label>New password (min 8 chars)</label><input type="password" name="password" autocomplete="new-password"></div>
+    <button class="b dark" style="justify-content:center">Save</button>
+  </div>
+</form>
+<%- include('_bottom') %>

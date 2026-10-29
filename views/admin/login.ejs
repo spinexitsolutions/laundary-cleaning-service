@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin sign in · <%= s.site_name %></title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/admin.css?v=1"><style>:root{--accent:<%= s.color_accent %>}</style></head><body>
+<div class="login">
+  <div class="login-art">
+    <div class="side-brand" style="padding:0"><span class="mk"><%= H.initials(s.site_name) %></span><div><%= s.site_name %><small>Control room</small></div></div>
+    <h2>Run the whole <em>laundry</em> from here.</h2>
+    <p class="mono" style="color:#7D8597;font-size:12px">ORDERS · PRICING · CONTENT · CUSTOMERS</p>
+    <div class="ring"></div>
+  </div>
+  <div class="login-form">
+    <form method="post" action="/admin/login">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <h1>Sign in</h1>
+      <p class="muted" style="margin:0 0 8px">Staff & administrators only.</p>
+      <% flash.forEach(f => { %><div class="flash <%= f.type %>"><%= f.msg %></div><% }) %>
+      <div class="fld"><label for="e">Email</label><input id="e" name="email" type="email" required autofocus autocomplete="username"></div>
+      <div class="fld"><label for="p">Password</label><input id="p" name="password" type="password" required autocomplete="current-password"></div>
+      <button class="b dark" style="justify-content:center;padding:12px">Sign in</button>
+      <a href="/" class="muted" style="text-align:center;font-size:13px">← Back to website</a>
+    </form>
+  </div>
+</div></body></html>

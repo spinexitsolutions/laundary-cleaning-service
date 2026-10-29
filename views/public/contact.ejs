@@ -1,0 +1,34 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Contact', heading: 'Say *hello.*', lead: 'Questions, bulk orders, feedback — we reply within a few hours.' }) %>
+<section class="section-tight">
+  <div class="wrap contact-grid">
+    <div class="contact-tiles">
+      <a class="contact-tile" href="tel:<%= s.phone.replace(/\s/g, '') %>"><span class="ic-wrap"><%- icon('phone') %></span><div><small>Call</small><b><%= s.phone %></b></div></a>
+      <% if (s.whatsapp) { %><a class="contact-tile" href="https://wa.me/<%= s.whatsapp %>" target="_blank" rel="noopener"><span class="ic-wrap" style="background:#25D366"><%- icon('whatsapp') %></span><div><small>WhatsApp</small><b>Chat with us</b></div></a><% } %>
+      <a class="contact-tile" href="mailto:<%= s.email %>"><span class="ic-wrap"><%- icon('mail') %></span><div><small>Email</small><b><%= s.email %></b></div></a>
+      <div class="contact-tile"><span class="ic-wrap"><%- icon('pin') %></span><div><small>Visit</small><b style="font-size:.98rem"><%- H.nl2br(s.address) %></b></div></div>
+      <div class="contact-tile"><span class="ic-wrap"><%- icon('clock') %></span><div><small>Hours</small><b><%= s.hours %></b></div></div>
+      <% if (s.map_embed) { %><iframe class="map-frame" src="<%= s.map_embed %>" loading="lazy" title="Map" referrerpolicy="no-referrer-when-downgrade"></iframe><% } %>
+    </div>
+    <div class="card" style="padding:clamp(24px,4vw,44px)">
+      <% if (sent) { %>
+        <div class="success-mark"><%- icon('check') %></div>
+        <h2 class="h-section" style="text-align:center;font-size:2.6rem">Message <em>received.</em></h2>
+        <p style="text-align:center;color:var(--muted)">Thanks for writing in — we’ll get back to you shortly.</p>
+      <% } else { %>
+      <h2 class="h-card" style="font-size:2.2rem;margin-bottom:26px">Send us a note</h2>
+      <form method="post" action="/contact" class="form-grid">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <div class="field"><label for="c-n">Name</label><input id="c-n" name="name" required></div>
+        <div class="field"><label for="c-p">Phone</label><input id="c-p" name="phone" type="tel"></div>
+        <div class="field full"><label for="c-e">Email</label><input id="c-e" name="email" type="email"></div>
+        <div class="field full"><label for="c-s">Subject</label><select id="c-s" name="subject"><option>General question</option><option>Bulk / corporate order</option><option>Feedback</option><option>Issue with an order</option></select></div>
+        <div class="field full"><label for="c-m">Message</label><textarea id="c-m" name="message" required></textarea></div>
+        <div class="full"><button class="btn">Send message <span class="btn-dot"><%- icon('arrow') %></span></button></div>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

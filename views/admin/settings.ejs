@@ -1,0 +1,14 @@
+<%- include('_top') %>
+<% const g = groups.find(x => x.key === tab); %>
+<div class="tabs-v">
+  <nav><% groups.forEach(x => { %><a href="?tab=<%= x.key %>" class="<%= x.key === tab ? 'on' : '' %>"><%- icon(x.icon) %><%= x.title %></a><% }) %></nav>
+  <form class="card" method="post" action="/admin/settings?_csrf=<%= csrf %>" enctype="multipart/form-data">
+    <input type="hidden" name="_group" value="<%= g.key %>">
+    <div class="card-h"><%- icon(g.icon) %><h2><%= g.title %></h2><div class="sp"></div><a href="<%= screen === 'homepage' ? (g.key.startsWith('about') ? '/about' : '/') : '/' %>" target="_blank" class="b sm"><%- icon('eye') %>Preview</a></div>
+    <div class="card-b form-grid">
+      <% g.fields.forEach(f => { %><%- include('_field', { f: { ...f, half: ['text', 'number', 'color', 'checkbox'].includes(f.type) && g.fields.length > 3 }, v: s[f.name], opts: [], ICON_NAMES }) %><% }) %>
+    </div>
+    <div class="card-b" style="border-top:1px solid var(--line)"><button class="b dark"><%- icon('check') %>Save <%= g.title %></button></div>
+  </form>
+</div>
+<%- include('_bottom') %>

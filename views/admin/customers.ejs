@@ -1,0 +1,14 @@
+<%- include('_top') %>
+<form class="toolbar"><input class="in" name="q" value="<%= q %>" placeholder="Search name, phone, email" style="max-width:320px"><button class="b dark"><%- icon('search') %>Search</button><div class="sp"></div><a href="/admin/customers.csv" class="b"><%- icon('upload') %>Export CSV</a></form>
+<div class="card"><div class="tbl-wrap"><table class="tbl">
+  <thead><tr><th>Customer</th><th>Phone</th><th>Pincode</th><th class="r">Orders</th><th class="r">Lifetime value</th><th>Last order</th><th>Account</th></tr></thead>
+  <tbody>
+  <% if (!customers.length) { %><tr><td colspan="7" class="empty">No customers found.</td></tr><% } %>
+  <% customers.forEach(c => { %>
+    <tr class="row-link" data-href="/admin/customers/<%= c.id %>"><td><div class="t-title"><span class="av-sm"><%= H.initials(c.name) %></span><div><b><%= c.name %></b><small><%= c.email || '' %></small></div></div></td>
+      <td class="mono"><%= c.phone %></td><td><%= c.pincode || '—' %></td><td class="r mono"><%= c.orders %></td><td class="r mono"><b><%= H.money(c.spent) %></b></td><td><%= c.last_order ? H.fmtDate(c.last_order) : '—' %></td>
+      <td><%- c.password_hash ? '<span class="pill" style="--c:#157347">Registered</span>' : '<span class="pill" style="--c:#6B7280">Guest</span>' %></td></tr>
+  <% }) %>
+  </tbody>
+</table></div></div>
+<%- include('_bottom') %>

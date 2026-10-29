@@ -1,0 +1,20 @@
+<%- include('_top') %>
+<form method="post" action="/admin/media?_csrf=<%= csrf %>" enctype="multipart/form-data" class="drop" style="margin-bottom:20px">
+  <%- icon('upload') %>
+  <p>Upload images (PNG, JPG, WEBP, GIF, AVIF · max 8 MB each)</p>
+  <input type="file" name="files" accept="image/*" multiple required>
+  <button class="b dark" style="margin-left:8px">Upload</button>
+</form>
+<% if (!media.length) { %><div class="card empty">No files yet.</div><% } %>
+<div class="media-grid">
+  <% media.forEach(m => { const url = '/uploads/' + m.filename; %>
+  <div class="media-item">
+    <a href="<%= url %>" target="_blank"><img src="<%= url %>" alt="<%= m.original_name %>" loading="lazy"></a>
+    <div class="meta"><span title="<%= m.original_name %>"><%= m.original_name %></span>
+      <button type="button" class="b ib sm ghost" data-copy="<%= url %>" title="Copy URL"><%- icon('copy') %></button>
+      <form method="post" action="/admin/media/<%= m.id %>/delete" onsubmit="return confirm('Delete this file? Pages using it will show a broken image.')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b ib sm ghost danger"><%- icon('trash') %></button></form>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<%- include('_bottom') %>

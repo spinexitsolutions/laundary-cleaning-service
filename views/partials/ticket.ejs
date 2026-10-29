@@ -1,0 +1,18 @@
+<div class="big-ticket">
+  <div class="main">
+    <span class="kicker">Pickup ticket</span>
+    <dl>
+      <div><dt>Name</dt><dd><%= order.name %></dd></div>
+      <div><dt>Phone</dt><dd><%= order.phone %></dd></div>
+      <div><dt>Pickup</dt><dd><%= H.fmtDate(order.pickup_date) %><br><span style="font-weight:500;color:var(--muted)"><%= order.pickup_slot %></span></dd></div>
+      <div><dt>Delivery (est.)</dt><dd><%= H.fmtDate(order.delivery_date) %><br><span style="font-weight:500;color:var(--muted)"><%= order.delivery_type === 'express' ? 'Express' : 'Standard' %></span></dd></div>
+      <div style="grid-column:1/-1"><dt>Services</dt><dd><%= order.services %></dd></div>
+      <div style="grid-column:1/-1"><dt>Address</dt><dd style="font-weight:500"><%- H.nl2br(order.address) %> — <%= order.pincode %></dd></div>
+    </dl>
+  </div>
+  <div class="stub">
+    <div><span class="kicker" style="justify-content:center">Order</span><div class="no" style="margin-top:8px"><%= order.order_no %></div></div>
+    <div><div style="font-family:var(--f-display);font-size:2rem"><%= order.count_at_pickup ? 'TBD' : H.money(order.total) %></div><small class="mono" style="color:var(--muted)"><%= order.count_at_pickup ? 'billed at pickup' : 'pay on delivery' %></small></div>
+    <div class="barcode"></div>
+  </div>
+</div>

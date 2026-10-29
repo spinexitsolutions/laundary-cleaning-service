@@ -1,0 +1,36 @@
+<%- include('../partials/top') %>
+<section class="wrap acct">
+  <%- include('_nav', { active: 'dash' }) %>
+  <div>
+    <a href="/account" class="link-arrow"><%- icon('arrow-left') %> All orders</a>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:24px">
+      <h1 class="h-section" style="font-size:2.6rem">Order <span class="mono" style="font-size:.7em"><%= order.order_no %></span></h1>
+      <span class="status-pill" style="--c:<%= H.STATUS_MAP[order.status].color %>"><%= H.STATUS_MAP[order.status].label %></span>
+    </div>
+    <%- include('../partials/progress', { order }) %>
+    <%- include('../partials/ticket', { order }) %>
+    <div class="svc-layout" style="margin-top:30px;grid-template-columns:1.2fr .8fr">
+      <div class="receipt">
+        <% if (!items.length) { %><div class="sum-empty">Items will be listed after pickup.</div><% } %>
+        <% items.forEach(it => { %><div class="r-row"><span class="r-name"><%= it.qty %> <%= it.unit %> · <%= it.item_name %></span><span class="r-dots"></span><span class="r-price"><%= H.money(it.line_total) %></span></div><% }) %>
+        <div class="sum-tot">
+          <div class="sum-line"><span>Subtotal</span><span><%= H.money(order.subtotal) %></span></div>
+          <% if (order.discount) { %><div class="sum-line disc"><span>Discount</span><span>−<%= H.money(order.discount) %></span></div><% } %>
+          <div class="sum-line"><span>Delivery</span><span><%= H.money(order.delivery_fee) %></span></div>
+          <% if (order.express_fee) { %><div class="sum-line"><span>Express</span><span><%= H.money(order.express_fee) %></span></div><% } %>
+          <div class="sum-line"><span><%= s.tax_label %></span><span><%= H.money(order.tax) %></span></div>
+          <div class="sum-line big"><span>Total</span><span><%= H.money(order.total) %></span></div>
+          <div class="sum-line"><span>Payment</span><span><%= order.payment_status.toUpperCase() %></span></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <div class="card"><span class="label">Updates</span><ul class="timeline" style="margin-top:18px"><% history.forEach(h => { %><li><b><%= (H.STATUS_MAP[h.status] || {}).label %></b><small><%= H.fmtDate(h.created_at, true) %></small><% if (h.note) { %><p><%= h.note %></p><% } %></li><% }) %></ul></div>
+        <a href="/account/orders/<%= order.order_no %>/invoice" target="_blank" class="btn btn-ghost"><%- icon('print') %> Invoice</a>
+        <% if (['pending', 'confirmed'].includes(order.status)) { %>
+        <form method="post" action="/account/orders/<%= order.order_no %>/cancel" onsubmit="return confirm('Cancel this pickup?')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-ghost" style="width:100%;justify-content:center;color:#B42318">Cancel pickup</button></form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,53 @@
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="/" class="brand" style="margin-bottom:20px"><span class="brand-mark" style="background:var(--paper);color:var(--ink)"><%= H.initials(s.site_name) %></span><%= s.site_name %></a>
+        <p style="margin-top:18px;max-width:36ch"><%= s.footer_about %></p>
+        <div class="socials">
+          <% [['social_instagram','instagram'],['social_facebook','facebook'],['social_x','x_social'],['social_youtube','youtube'],['social_linkedin','linkedin']].forEach(([k, ic]) => { if (s[k]) { %>
+          <a href="<%= s[k] %>" target="_blank" rel="noopener" aria-label="<%= ic %>"><%- icon(ic) %></a>
+          <% } }) %>
+        </div>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul><% menu('footer_company').forEach(m => { %><li><a href="<%= m.url %>" <%= m.new_tab ? 'target=_blank rel=noopener' : '' %>><%= m.label %></a></li><% }) %></ul>
+        <h4 style="margin-top:32px">Services</h4>
+        <ul><% navServices.slice(0, 6).forEach(sv => { %><li><a href="/services/<%= sv.slug %>"><%= sv.title %></a></li><% }) %></ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul><% menu('footer_help').forEach(m => { %><li><a href="<%= m.url %>" <%= m.new_tab ? 'target=_blank rel=noopener' : '' %>><%= m.label %></a></li><% }) %></ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <div class="foot-contact">
+          <a href="tel:<%= s.phone.replace(/\s/g, '') %>"><%- icon('phone') %> <%= s.phone %></a>
+          <a href="mailto:<%= s.email %>"><%- icon('mail') %> <%= s.email %></a>
+          <div><%- icon('pin') %> <span><%- H.nl2br(s.address) %></span></div>
+          <div><%- icon('clock') %> <span><%= s.hours %></span></div>
+        </div>
+        <h4 style="margin-top:32px"><%= s.newsletter_title %></h4>
+        <form class="news-form" method="post" action="/subscribe">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <input type="email" name="email" placeholder="you@email.com" required aria-label="Email">
+          <button aria-label="Subscribe"><%- icon('arrow') %></button>
+        </form>
+      </div>
+    </div>
+    <div class="foot-word" aria-hidden="true"><%- (() => { const w = s.site_name.split(' '); return w.length > 1 ? H.esc(w.slice(0, -1).join(' ')) + ' <em>' + H.esc(w[w.length - 1]) + '</em>' : H.esc(s.site_name); })() %></div>
+    <div class="foot-bottom">
+      <span><%= (s.footer_copyright || '').replace('{year}', new Date().getFullYear()) %></span>
+      <span class="cares" aria-hidden="true"><%- care('wash') %><%- care('bleach') %><%- care('dry') %><%- care('iron') %><%- care('dryclean') %></span>
+    </div>
+  </div>
+</footer>
+<% if (s.show_whatsapp_button === '1' && s.whatsapp) { %>
+<a class="wa-float" href="https://wa.me/<%= s.whatsapp %>?text=<%= encodeURIComponent('Hi! I would like to schedule a laundry pickup.') %>" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><%- icon('whatsapp') %></a>
+<% } %>
+<script>window.CSRF = "<%= csrf %>"; window.CUR = "<%= s.currency %>";</script>
+<script src="/static/js/site.js?v=1" defer></script>
+</body>
+</html>

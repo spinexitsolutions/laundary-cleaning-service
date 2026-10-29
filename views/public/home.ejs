@@ -1,0 +1,293 @@
+<%- include('../partials/top') %>
+<% let secNo = 0; const no = () => String(++secNo).padStart(2, '0'); %>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="kicker"><%= s.hero_eyebrow %></span>
+      <h1 class="display">
+        <% H.heroLines(s.hero_title).forEach(l => { %><span class="line"><span><%- H.emph(l) %></span></span><% }) %>
+      </h1>
+      <p class="lead rv"><%= s.hero_subtitle %></p>
+      <div class="hero-ctas rv rv-d1">
+        <a href="<%= s.hero_cta_link %>" class="btn"><%= s.hero_cta_label %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+        <% if (s.hero_cta2_label) { %><a href="<%= s.hero_cta2_link %>" class="btn btn-ghost"><%= s.hero_cta2_label %></a><% } %>
+      </div>
+      <div class="hero-meta rv rv-d2">
+        <div><%- icon('star') %><span><b class="stars">★★★★★</b><%= s.hero_rating %></span></div>
+        <div><%- icon('truck') %><span><b>Free pickup</b>above <%= H.money(s.free_delivery_above) %></span></div>
+        <div><%- icon('clock') %><span><b>Express 24h</b>delivery option</span></div>
+      </div>
+    </div>
+
+    <div class="machine" aria-hidden="true">
+      <svg class="machine-ring" viewBox="0 0 400 400">
+        <defs><path id="ringPath" d="M200,200 m-186,0 a186,186 0 1,1 372,0 a186,186 0 1,1 -372,0"/></defs>
+        <text><textPath href="#ringPath"><%= (s.hero_ring_text || '').repeat(3).slice(0, 120) %></textPath></text>
+      </svg>
+      <div class="machine-body">
+        <div class="machine-door">
+          <div class="machine-glass">
+            <% if (s.hero_image) { %>
+              <img src="<%= s.hero_image %>" alt="">
+            <% } else { %>
+              <div class="drum"><i class="cloth c1"></i><i class="cloth c2"></i><i class="cloth c3"></i><i class="cloth c4"></i></div>
+              <div class="water"></div>
+              <% [[18,10,0],[42,7,1.2],[66,12,2.1],[30,6,3.3],[78,8,4.2],[55,5,.6]].forEach(([l, sz, d]) => { %>
+                <i class="bubble" style="left:<%= l %>%;width:<%= sz %>%;height:<%= sz %>%;animation-delay:<%= d %>s"></i>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+        <span class="machine-hinge"></span>
+      </div>
+      <div class="ticket ticket-b"><span class="tick alt"><%- icon('truck') %></span><div><span class="mono">VALET · 10:00–12:00</span><b>Pickup on the way</b></div></div>
+      <div class="ticket ticket-a"><span class="tick"><%- icon('check') %></span><div><span class="mono">ORDER #<%= s.order_prefix %>-2041</span><b><%= s.hero_ticket_text %></b></div></div>
+    </div>
+  </div>
+</section>
+
+<% if (s.home_show_marquee === '1') { const words = H.lines(s.marquee_items); const cares = ['wash','iron','dry','dryclean','bleach','hang']; %>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <% for (let k = 0; k < 2; k++) words.forEach((w, i) => { %><span class="marquee-item"><%= w %> <%- care(cares[i % cares.length]) %></span><% }) %>
+  </div>
+</div>
+<% } %>
+
+<!-- ============ SERVICES ============ -->
+<% if (s.home_show_services === '1' && services.length) { %>
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.services_kicker %></span>
+      <h2 class="h-section rv"><%- H.emph(s.services_title) %></h2>
+      <p class="rv rv-d1"><%= s.services_text %></p>
+    </div>
+    <div class="tags">
+      <% services.forEach((sv, i) => { %>
+      <a href="/services/<%= sv.slug %>" class="tag-card rv rv-d<%= i % 3 %>" style="--tc:<%= sv.color %>">
+        <span class="hole"></span>
+        <span class="tag-no">N°<%= String(i + 1).padStart(3, '0') %></span>
+        <% if (sv.turnaround) { %><span class="tag-time"><%= sv.turnaround %></span><% } %>
+        <% if (sv.image) { %><div class="tag-img"><img src="<%= sv.image %>" alt="<%= sv.title %>" loading="lazy"></div><% } else { %>
+        <span class="tag-icon"><%- icon(sv.icon) %></span><% } %>
+        <h3 class="h-card"><%= sv.title %></h3>
+        <p><%= sv.short_desc %></p>
+        <div class="tag-foot">
+          <div class="tag-price"><small>Starting from</small><b><%= H.money(sv.pricing_mode === 'per_kg' ? sv.price_per_kg : sv.starting_price) %></b><span>/<%= sv.pricing_mode === 'per_kg' ? 'kg' : 'item' %></span></div>
+          <span class="tag-go"><%- icon('arrow-up-right') %></span>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ PROCESS ============ -->
+<% if (s.home_show_process === '1' && s.process_steps.length) { %>
+<section class="section process" id="process" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.process_kicker %></span>
+      <h2 class="h-section rv"><%- H.emph(s.process_title) %></h2>
+    </div>
+    <div class="line-wrap">
+      <svg class="clothesline" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0,8 Q500,70 1000,8"/></svg>
+      <div class="steps">
+        <% s.process_steps.forEach((st, i) => { %>
+        <div class="step rv rv-d<%= i %>">
+          <span class="pin"></span>
+          <div class="step-card">
+            <span class="step-num">0<%= i + 1 %></span>
+            <%- icon(st.icon || 'check') %>
+            <h3><%= st.title %></h3>
+            <p><%= st.text %></p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ STATS ============ -->
+<% if (s.home_show_stats === '1' && s.stats.length) { %>
+<section class="section-tight dark">
+  <div class="wrap">
+    <div class="stats">
+      <% s.stats.forEach(st => { %>
+      <div class="stat rv">
+        <div class="stat-val"><span data-count="<%= st.value %>"><%= st.value %></span><sup><%= st.suffix %></sup></div>
+        <p><%= st.label %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+  <% if (s.home_show_marquee === '1') { %>
+  <div class="marquee dark" style="margin-top:60px" aria-hidden="true"><div class="marquee-track" style="animation-direction:reverse">
+    <% for (let k = 0; k < 2; k++) ['Washed with care','Pressed by hand','Delivered on time','Never mixed','Eco detergents','Fully insured'].forEach((w, i) => { %><span class="marquee-item"><%= w %> <%- care(['dry','wash','iron','hang','bleach','dryclean'][i]) %></span><% }) %>
+  </div></div>
+  <% } %>
+</section>
+<% } %>
+
+<!-- ============ PRICING PREVIEW ============ -->
+<% if (s.home_show_pricing === '1') { const perItem = pb.services.filter(x => x.pricing_mode === 'per_item'); const kgSvcs = pb.services.filter(x => x.pricing_mode === 'per_kg'); %>
+<section class="section" id="pricing">
+  <div class="wrap pricing-grid">
+    <div>
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.pricing_kicker %></span>
+      <h2 class="h-section rv" style="margin:26px 0 30px"><%- H.emph(s.pricing_title) %></h2>
+      <% kgSvcs.forEach(k => { %>
+        <div class="kg-pill rv"><div><span class="label"><%= k.title %></span><div style="color:var(--muted);font-size:.9rem"><%= k.tagline %></div></div><b><%= H.money(k.price_per_kg) %><small class="mono" style="font-size:.8rem">/kg</small></b></div>
+      <% }) %>
+      <div class="price-notes">
+        <div class="price-note"><%- icon('tag') %><div><b>No hidden charges</b><span>The price list is the price. Weight-based orders are confirmed at pickup.</span></div></div>
+        <div class="price-note"><%- icon('truck') %><div><b>Free pickup & delivery</b><span>On orders above <%= H.money(s.free_delivery_above) %>. Otherwise just <%= H.money(s.delivery_fee) %>.</span></div></div>
+      </div>
+      <a href="/pricing" class="link-arrow">See the full price list <%- icon('arrow') %></a>
+    </div>
+    <div class="receipt rv rv-d1" data-receipt>
+      <div class="receipt-head"><b><%= s.site_name %></b><small>PRICE LIST · <%= new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }).toUpperCase() %></small></div>
+      <div class="r-tabs">
+        <% pb.cats.forEach((c, i) => { %><button class="r-tab <%= i === 0 ? 'on' : '' %>" data-rtab="<%= c.id %>"><%= c.name %></button><% }) %>
+      </div>
+      <% pb.cats.forEach((c, i) => { %>
+      <div class="r-group" data-rgroup="<%= c.id %>" <%= i ? 'hidden' : '' %>>
+        <% pb.items.filter(it => it.category_id === c.id).slice(0, 7).forEach(it => {
+             const prices = pb.pmap[it.id] || {}; const first = perItem.find(sv => prices[sv.id] != null); if (!first) return; %>
+          <div class="r-row"><span class="r-name"><%= it.name %> <span class="r-unit">· <%= first.title %></span></span><span class="r-dots"></span><span class="r-price"><%= H.money(prices[first.id]) %></span></div>
+        <% }) %>
+      </div>
+      <% }) %>
+      <div class="r-foot"><span>* <%= s.tax_label %> extra as applicable</span><span>THANK YOU</span></div>
+      <div class="barcode"></div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ WHY ============ -->
+<% if (s.home_show_why === '1' && s.why_items.length) { %>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.why_kicker %></span>
+      <h2 class="h-section rv"><%- H.emph(s.why_title) %></h2>
+      <% if (s.why_image) { %><img src="<%= s.why_image %>" alt="" style="border-radius:24px;max-height:260px;object-fit:cover;width:100%"><% } %>
+    </div>
+    <div class="why-grid">
+      <% s.why_items.forEach((w, i) => { %>
+      <div class="why rv rv-d<%= i % 3 %>"><span class="num">/<%= String(i + 1).padStart(2, '0') %></span><%- icon(w.icon || 'check') %><h3><%= w.title %></h3><p><%= w.text %></p></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ TESTIMONIALS ============ -->
+<% if (s.home_show_testimonials === '1' && testimonials.length) { %>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.testimonials_kicker %></span>
+      <h2 class="h-section rv"><%- H.emph(s.testimonials_title) %></h2>
+      <div class="quote-nav" style="justify-self:end">
+        <button class="icon-btn" data-scroll="-1" aria-label="Previous"><%- icon('arrow-left') %></button>
+        <button class="icon-btn" data-scroll="1" aria-label="Next"><%- icon('arrow') %></button>
+      </div>
+    </div>
+    <div class="quotes" data-quotes>
+      <% testimonials.forEach(t => { %>
+      <figure class="quote" style="margin:0">
+        <span class="stars"><%= '★'.repeat(t.rating || 5) %></span>
+        <blockquote>“<%= t.content %>”</blockquote>
+        <figcaption class="quote-by">
+          <span class="avatar"><% if (t.avatar) { %><img src="<%= t.avatar %>" alt=""><% } else { %><%= H.initials(t.name) %><% } %></span>
+          <div><b><%= t.name %></b><span><%= t.role %></span></div>
+        </figcaption>
+      </figure>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ AREAS ============ -->
+<% if (s.home_show_areas === '1' && areas.length) { %>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <div class="areas-card rv">
+      <div>
+        <span class="kicker"><b>(<%= no() %>)</b> <%= s.areas_kicker %></span>
+        <h2 class="h-section" style="margin-top:22px;font-size:clamp(2rem,4vw,3.4rem)"><%- H.emph(s.areas_title) %></h2>
+        <form class="pin-form" data-pincheck>
+          <input class="input" name="pin" inputmode="numeric" maxlength="6" placeholder="Enter your pincode" aria-label="Pincode" required>
+          <button class="btn btn-sm" type="submit">Check <span class="btn-dot" style="width:30px;height:30px"><%- icon('arrow') %></span></button>
+        </form>
+        <div class="pin-result" data-pinresult></div>
+        <div class="area-chips"><% areas.forEach(a => { %><span class="chip"><%- icon('pin') %><%= a.name %></span><% }) %></div>
+      </div>
+      <div class="areas-map" aria-hidden="true">
+        <div class="grid-bg"></div>
+        <% const spots = [[22,30],[60,22],[40,58],[74,62],[30,80],[80,38],[52,40]]; areas.slice(0, 7).forEach((a, i) => { const [x, y] = spots[i]; %>
+          <span class="ping" style="left:<%= x %>%;top:<%= y %>%;animation-delay:<%= i * .3 %>s"><span class="ping-label"><%= a.name %></span></span>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ FAQ ============ -->
+<% if (s.home_show_faq === '1' && faqs.length) { %>
+<section class="section">
+  <div class="wrap faq-grid">
+    <div class="faq-side">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.faq_kicker %></span>
+      <h2 class="h-section rv" style="margin:24px 0"><%- H.emph(s.faq_title) %></h2>
+      <a href="/faq" class="link-arrow">All questions <%- icon('arrow') %></a>
+      <a class="help-card" href="tel:<%= s.phone.replace(/\s/g, '') %>"><%- icon('phone') %><div><small>Still curious? Call us</small><b><%= s.phone %></b></div></a>
+    </div>
+    <div class="faq">
+      <% faqs.forEach((f, i) => { %>
+      <details <%= i === 0 ? 'open' : '' %>><summary><%= f.question %><span class="plus"><%- icon('plus') %></span></summary><div class="answer"><%= f.answer %></div></details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ BLOG ============ -->
+<% if (s.home_show_blog === '1' && posts.length) { %>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker"><b>(<%= no() %>)</b> <%= s.blog_kicker %></span>
+      <h2 class="h-section rv"><%- H.emph(s.blog_title) %></h2>
+      <a href="/blog" class="link-arrow" style="justify-self:end">Read the journal <%- icon('arrow') %></a>
+    </div>
+    <div class="posts">
+      <% posts.forEach((p, i) => { %><%- include('../partials/post-card', { p, i }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ============ CTA ============ -->
+<% if (s.home_show_cta === '1') { %>
+<section class="wrap">
+  <div class="cta-band rv">
+    <%- care('dry', 'k1') %><%- care('wash', 'k2') %>
+    <h2 class="h-section" style="max-width:14ch"><%- H.emph(s.cta_title) %></h2>
+    <p><%= s.cta_text %></p>
+    <a href="/book" class="btn"><%= s.cta_button %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/bottom') %>

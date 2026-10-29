@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice <%= order.order_no %></title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#eee;font:14px/1.5 Manrope,system-ui,sans-serif;color:#111}
+.inv{max-width:820px;margin:30px auto;background:#fff;padding:48px;box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.top{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #111;padding-bottom:24px}
+h1{font-family:Fraunces,serif;font-weight:400;font-size:40px;margin:0;letter-spacing:-.02em}
+.mono{font-family:'JetBrains Mono',monospace}
+.muted{color:#666}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:28px 0}
+.lbl{font:600 11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:#888;margin-bottom:6px}
+table{width:100%;border-collapse:collapse}th{text-align:left;font:600 11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:#666;border-bottom:1px solid #111;padding:10px 6px}
+td{padding:10px 6px;border-bottom:1px dashed #ddd}td.r,th.r{text-align:right}
+.tot{margin-left:auto;width:300px;margin-top:20px}.tot div{display:flex;justify-content:space-between;padding:6px 0}.tot .big{border-top:2px solid #111;font-weight:700;font-size:18px;margin-top:6px;padding-top:12px}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid #eee;color:#666;font-size:12px}
+.bar{position:sticky;top:0;background:#111;color:#fff;text-align:center;padding:10px}.bar button{background:<%= s.color_accent %>;color:#fff;border:0;padding:8px 18px;border-radius:99px;font-weight:600;cursor:pointer}
+@media print{.bar{display:none}body{background:#fff}.inv{box-shadow:none;margin:0;max-width:none}}
+</style></head><body>
+<div class="bar"><button onclick="print()">Print / Save as PDF</button></div>
+<div class="inv">
+  <div class="top">
+    <div><h1><%= s.site_name %></h1><div class="muted"><%- H.nl2br(s.address) %><br><%= s.phone %> · <%= s.email %><% if (s.gstin) { %><br>GSTIN: <%= s.gstin %><% } %></div></div>
+    <div style="text-align:right"><div class="lbl">Tax invoice</div><div class="mono" style="font-size:20px;font-weight:600"><%= order.order_no %></div><div class="muted">Date: <%= H.fmtDate(order.created_at) %></div><div class="muted">Status: <%= H.STATUS_MAP[order.status].label %></div><div class="muted">Payment: <%= order.payment_status.toUpperCase() %> (<%= order.payment_method %>)</div></div>
+  </div>
+  <div class="grid">
+    <div><div class="lbl">Billed to</div><b><%= order.name %></b><br><%= order.phone %><% if (order.email) { %><br><%= order.email %><% } %><br><%- H.nl2br(order.address) %> — <%= order.pincode %></div>
+    <div><div class="lbl">Schedule</div>Pickup: <%= H.fmtDate(order.pickup_date) %>, <%= order.pickup_slot %><br>Delivery: <%= H.fmtDate(order.delivery_date) %> (<%= order.delivery_type %>)</div>
+  </div>
+  <table><thead><tr><th>#</th><th>Item</th><th>Service</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead><tbody>
+  <% items.forEach((it, i) => { %><tr><td><%= i + 1 %></td><td><%= it.item_name %></td><td><%= it.service_title %></td><td class="r"><%= it.qty %> <%= it.unit %></td><td class="r"><%= H.money(it.unit_price) %></td><td class="r"><%= H.money(it.line_total) %></td></tr><% }) %>
+  <% if (!items.length) { %><tr><td colspan="6" class="muted">Items to be counted at pickup.</td></tr><% } %>
+  </tbody></table>
+  <div class="tot">
+    <div><span>Subtotal</span><span><%= H.money(order.subtotal) %></span></div>
+    <% if (order.discount) { %><div><span>Discount <%= order.coupon_code ? '(' + order.coupon_code + ')' : '' %></span><span>−<%= H.money(order.discount) %></span></div><% } %>
+    <div><span>Pickup & delivery</span><span><%= H.money(order.delivery_fee) %></span></div>
+    <% if (order.express_fee) { %><div><span>Express</span><span><%= H.money(order.express_fee) %></span></div><% } %>
+    <div><span><%= s.tax_label %> (<%= s.tax_percent %>%)</span><span><%= H.money(order.tax) %></span></div>
+    <div class="big"><span>Total</span><span><%= H.money(order.total) %></span></div>
+  </div>
+  <div class="foot"><%= s.invoice_note %></div>
+</div></body></html>

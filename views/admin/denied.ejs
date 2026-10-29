@@ -1,0 +1,3 @@
+<%- include('_top', { title: typeof notFound !== 'undefined' ? 'Not found' : 'Access denied' }) %>
+<div class="card empty"><h2><%= typeof notFound !== 'undefined' ? 'That page doesn’t exist.' : 'You don’t have permission to view this.' %></h2><a href="/admin" class="b">Back to dashboard</a></div>
+<%- include('_bottom') %>

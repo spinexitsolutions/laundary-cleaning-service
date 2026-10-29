@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %> · <%= s.site_name %> Admin</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/admin.css?v=1">
+<style>:root{--primary:<%= s.color_primary %>;--accent:<%= s.color_accent %>}</style>
+</head><body>
+<div class="app">
+<% const nav = (href, ic, label, extra = '') => { const on = href === '/admin' ? (path === '/admin' || path === '/admin/') : (path === href || path.startsWith(href + '/')); return `<a href="${href}" class="${on ? 'on' : ''}">${icon(ic)}<span>${label}</span>${extra}</a>`; };
+   const isMgr = ['admin', 'manager'].includes(admin.role); %>
+<aside class="side" id="side">
+  <div class="side-brand"><span class="mk"><%= H.initials(s.site_name) %></span><div><%= s.site_name %><small>Control room</small></div></div>
+  <div class="side-group">
+    <%- nav('/admin', 'dashboard', 'Dashboard') %>
+    <%- nav('/admin/orders', 'receipt', 'Orders', pendingCount ? `<span class="badge">${pendingCount}</span>` : '') %>
+    <%- nav('/admin/customers', 'users', 'Customers') %>
+    <%- nav('/admin/messages', 'inbox', 'Messages', unread ? `<span class="badge">${unread}</span>` : '') %>
+  </div>
+  <% if (isMgr) { %>
+  <div class="side-group"><h6>Catalogue</h6>
+    <%- nav('/admin/services', 'sparkles', 'Services') %>
+    <%- nav('/admin/pricing', 'tag', 'Price List') %>
+    <%- nav('/admin/items', 'shirt', 'Garments / Items') %>
+    <%- nav('/admin/categories', 'layers', 'Item Categories') %>
+  </div>
+  <div class="side-group"><h6>Operations</h6>
+    <%- nav('/admin/areas', 'map', 'Service Areas') %>
+    <%- nav('/admin/slots', 'clock', 'Pickup Slots') %>
+    <%- nav('/admin/coupons', 'gift', 'Coupons') %>
+  </div>
+  <div class="side-group"><h6>Website CMS</h6>
+    <%- nav('/admin/homepage', 'home', 'Homepage & About') %>
+    <%- nav('/admin/pages', 'file', 'Pages') %>
+    <%- nav('/admin/posts', 'book', 'Blog') %>
+    <%- nav('/admin/testimonials', 'quote', 'Testimonials') %>
+    <%- nav('/admin/faqs', 'help', 'FAQs') %>
+    <%- nav('/admin/team', 'users', 'Team') %>
+    <%- nav('/admin/gallery', 'image', 'Gallery') %>
+    <%- nav('/admin/menus', 'menu', 'Menus') %>
+    <%- nav('/admin/media', 'upload', 'Media Library') %>
+    <%- nav('/admin/subscribers', 'mail', 'Subscribers') %>
+  </div>
+  <div class="side-group"><h6>System</h6>
+    <%- nav('/admin/settings', 'settings', 'Settings') %>
+    <% if (admin.role === 'admin') { %><%- nav('/admin/staff', 'lock', 'Staff & Admins') %><% } %>
+  </div>
+  <% } %>
+  <div class="side-foot">
+    <a href="/admin/profile" style="padding:0;display:flex;gap:10px;align-items:center;background:none"><span class="av"><%= H.initials(admin.name) %></span><div><b><%= admin.name %></b><small><%= admin.role %></small></div></a>
+    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button title="Sign out"><%- icon('logout') %></button></form>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <button class="b ib menu-btn" onclick="document.getElementById('side').classList.toggle('open')" aria-label="Menu"><%- icon('menu') %></button>
+    <h1><%= title %></h1>
+    <div class="sp"></div>
+    <form class="q" action="/admin/orders"><%- icon('search') %><input name="q" placeholder="Search orders, phone, name…"></form>
+    <a href="/admin/orders/new" class="b dark"><%- icon('plus') %><span>New order</span></a>
+    <a href="/" target="_blank" class="b ib" title="View website"><%- icon('external') %></a>
+  </header>
+  <div class="content">
+  <% flash.forEach(f => { %><div class="flash <%= f.type %>"><%- icon(f.type === 'error' ? 'info' : 'check') %><%= f.msg %></div><% }) %>

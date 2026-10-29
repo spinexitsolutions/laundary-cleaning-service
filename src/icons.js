@@ -1,0 +1,107 @@
+// Hand-drawn 24×24 stroke icon set (no external icon font needed).
+const P = {
+  shirt: '<path d="M8 3 4 5.5 2.5 10l3 1.2V21h13V11.2l3-1.2L20 5.5 16 3c-.6 1.6-2.2 2.6-4 2.6S8.6 4.6 8 3Z"/>',
+  tshirt: '<path d="M9 3h6l5 3-2 4-2-1v12H8V9L6 10 4 6l5-3Z"/><path d="M9 3a3 3 0 0 0 6 0"/>',
+  sparkles: '<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/><path d="M5 2.5l.6 1.4 1.4.6-1.4.6L5 6.5l-.6-1.4L3 4.5l1.4-.6Z"/>',
+  iron: '<path d="M3 17h16a2 2 0 0 0 2-2c0-4.4-3.6-8-8-8H8"/><path d="M3 17c0-4 2.5-7 6-7h10"/><path d="M7 20h.01M12 20h.01M17 20h.01"/>',
+  drop: '<path d="M12 2.8S5.5 10 5.5 14.5a6.5 6.5 0 0 0 13 0C18.5 10 12 2.8 12 2.8Z"/><path d="M9 15a3 3 0 0 0 3 3"/>',
+  washer: '<rect x="3.5" y="2.5" width="17" height="19" rx="2.5"/><circle cx="12" cy="13" r="5"/><path d="M9.5 13.5c1-1 2-.2 2.5.3s1.6 1.2 2.5 0"/><path d="M7 6h.01M10 6h4"/>',
+  shoe: '<path d="M3 7v9a2 2 0 0 0 2 2h14.5a1.5 1.5 0 0 0 1.5-1.5c0-2-1.6-3.3-3.5-3.7L13 12l-2-4H8L7 9.5 4.5 7Z"/><path d="M3 15h18"/><path d="M10 10l1.5-.5M11 12l1.6-.6"/>',
+  bed: '<path d="M2 18V7M2 13h20v5M22 18v-3a4 4 0 0 0-4-4H10v2"/><circle cx="6.5" cy="10.5" r="2"/>',
+  curtain: '<path d="M3 3h18"/><path d="M5 3c0 6 2 12 4 18H5V3Z"/><path d="M19 3c0 6-2 12-4 18h4V3Z"/>',
+  rug: '<rect x="4" y="5" width="16" height="14" rx="1"/><rect x="7.5" y="8.5" width="9" height="7" rx=".5"/><path d="M4 3v2M8 3v2M12 3v2M16 3v2M20 3v2M4 19v2M8 19v2M12 19v2M16 19v2M20 19v2"/>',
+  dress: '<path d="M9 2v3l-1.5 4L4 21h16L16.5 9 15 5V2"/><path d="M9 5h6M7.5 9h9"/>',
+  suit: '<path d="M6 3 3 6v15h18V6l-3-3-6 6Z"/><path d="M12 9v12M6 3l3 9M18 3l-3 9"/>',
+  truck: '<path d="M2 6h11v10H2z"/><path d="M13 9h4.5l3.5 3.5V16h-8"/><circle cx="6" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  leaf: '<path d="M4 20c0-9 6-15 16-16-1 10-7 16-16 16Z"/><path d="M4 20 13 11"/>',
+  shield: '<path d="M12 2.5 4 5.5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10v-6Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  star: '<path d="m12 2.8 2.8 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.7 3.1 1.2-6.3L2.9 9.4l6.3-.8Z"/>',
+  phone: '<path d="M5 3h3.5l1.8 4.5-2.3 1.4a11 11 0 0 0 7.1 7.1l1.4-2.3L21 15.5V19a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/>',
+  mail: '<rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/>',
+  pin: '<path d="M12 21.5s7-6.2 7-11.5a7 7 0 0 0-14 0c0 5.3 7 11.5 7 11.5Z"/><circle cx="12" cy="10" r="2.5"/>',
+  check: '<path d="m4.5 12.5 5 5L20 7"/>',
+  arrow: '<path d="M4 12h16M14 6l6 6-6 6"/>',
+  'arrow-up-right': '<path d="M7 17 17 7M8 7h9v9"/>',
+  'arrow-left': '<path d="M20 12H4M10 6l-6 6 6 6"/>',
+  calendar: '<rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="M7.5 13.5h.01M12 13.5h.01M16.5 13.5h.01M7.5 17h.01M12 17h.01"/>',
+  tag: '<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9Z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+  menu: '<path d="M3 7h18M3 12h18M3 17h12"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 13h11l1-13M9 7V4h6v3"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/>',
+  box: '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/>',
+  package: '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9M7.5 5.2l9 4.6"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.5l2.6 1.5M17.2 16l2.6 1.5M4.2 17.5 6.8 16M17.2 8l2.6-1.5"/><circle cx="12" cy="12" r="7"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15 15h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+  share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/>',
+  receipt: '<path d="M5 2.5v19l2.3-1.5 2.4 1.5 2.3-1.5 2.3 1.5 2.4-1.5 2.3 1.5v-19l-2.3 1.5-2.4-1.5L12 4 9.7 2.5 7.3 4Z"/><path d="M9 9h6M9 13h6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  layout: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  route: '<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H17a3.5 3.5 0 0 0 0-7H7a3.5 3.5 0 0 1 0-7h8.5"/>',
+  chart: '<path d="M3 21h18"/><rect x="5" y="11" width="3" height="7"/><rect x="10.5" y="6" width="3" height="12"/><rect x="16" y="13" width="3" height="5"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
+  home: '<path d="M3 11 12 3l9 8"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  dashboard: '<rect x="3" y="3" width="8" height="10" rx="1.5"/><rect x="13" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="11" width="8" height="10" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/>',
+  file: '<path d="M6 2.5h8l5 5v14H6Z"/><path d="M14 2.5v5h5M9 13h7M9 17h7"/>',
+  book: '<path d="M4 4.5A2 2 0 0 1 6 2.5h14v16H6a2 2 0 0 0-2 2Z"/><path d="M4 20.5a2 2 0 0 0 2 2h14v-4"/>',
+  help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17.5h.01"/>',
+  quote: '<path d="M4 18c3-1 4.5-3.5 4.5-7.5V6H4v5h4.5M13.5 18c3-1 4.5-3.5 4.5-7.5V6h-4.5v5H18"/>',
+  image: '<rect x="3" y="3.5" width="18" height="17" rx="2"/><circle cx="9" cy="9.5" r="2"/><path d="m21 16-5-5L5 20.5"/>',
+  link: '<path d="M10 14a4 4 0 0 0 6 .4l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10a4 4 0 0 0-6-.4l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/>',
+  inbox: '<path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 4.5h13L21 13v6a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19v-6Z"/>',
+  ticket: '<path d="M3 7a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-3a2 2 0 0 0 0-4Z"/><path d="M14 5v2M14 11v2M14 17v2"/>',
+  map: '<path d="m3 6 6-2.5 6 2.5 6-2.5v14.5L15 20.5 9 18l-6 2.5Z"/><path d="M9 3.5V18M15 6v14.5"/>',
+  logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l5-5-5-5M15 12H3"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  print: '<path d="M6 9V2.5h12V9"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7.5H6Z"/>',
+  whatsapp: '<path d="M3.5 20.5 5 16a8.5 8.5 0 1 1 3.2 3.1Z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1.2-1 .8a5 5 0 0 1-2.7-2.7l.8-1-1.2-2L9 8.5Z"/>',
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
+  facebook: '<path d="M14.5 21v-8h3l.5-3.5h-3.5V7.5c0-1 .4-1.8 1.8-1.8H18V2.6A22 22 0 0 0 15.4 2.5c-2.6 0-4.4 1.6-4.4 4.5v2.5H8V13h3v8"/>',
+  x_social: '<path d="M4 4l16 16M20 4 4 20"/>',
+  youtube: '<rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3Z"/>',
+  linkedin: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10.5V17M8 7.5h.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3s2.5 1 2.5 3V17"/>',
+  bubbles: '<circle cx="8" cy="15" r="4.5"/><circle cx="16.5" cy="8.5" r="3"/><circle cx="17.5" cy="17" r="2"/>',
+  hanger: '<path d="M12 7.5a2 2 0 1 1 2-2c0 1-.8 1.5-2 2.2V9l9 7.5a1.5 1.5 0 0 1-1 2.5H4a1.5 1.5 0 0 1-1-2.5L12 9"/>',
+  gift: '<rect x="3" y="8" width="18" height="4.5" rx="1"/><path d="M5 12.5V21h14v-8.5M12 8v13"/><path d="M12 8C10 4 6.5 4 6.5 6s3 2 5.5 2c2.5 0 5.5 0 5.5-2s-3.5-2-5.5 2Z"/>',
+  wallet: '<path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 13.5h.01"/>',
+  lock: '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
+  upload: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  copy: '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.5L3 9"/><path d="M3 4v5h5M4 13a8 8 0 0 0 14.6 4.5L21 15"/><path d="M21 20v-5h-5"/>',
+  external: '<path d="M14 3h7v7M21 3l-9 9"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/>',
+  chevron: '<path d="m9 6 6 6-6 6"/>',
+  'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+  grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4Z"/><path d="M10 21h4"/>',
+  baby: '<circle cx="12" cy="7" r="4"/><path d="M6 21v-3a6 6 0 0 1 12 0v3"/><path d="M10.5 7h.01M13.5 7h.01"/>',
+  sofa: '<path d="M4 11V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v3"/><path d="M2 13a2 2 0 0 1 4 0v2h12v-2a2 2 0 0 1 4 0v5H2Z"/><path d="M5 18v2M19 18v2"/>',
+};
+
+const NAMES = Object.keys(P).filter((n) => !['x_social', 'grip'].includes(n));
+
+function icon(name, cls = '') {
+  const body = P[name] || P.sparkles;
+  return `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+}
+
+// Laundry care-label symbols, used as decorative glyphs across the site.
+const CARE = {
+  wash: '<path d="M4 9h24l-3 15H7Z"/><path d="M4 9c2.5 2 5 2 7.5 0s5-2 7.5 0 5 2 9 0"/><text x="16" y="21" font-size="7" text-anchor="middle" fill="currentColor" stroke="none" font-family="monospace">30</text>',
+  bleach: '<path d="M16 6 28 26H4Z"/><path d="M11 22 21 10M13 24 23 12"/>',
+  dry: '<rect x="5" y="5" width="22" height="22" rx="1"/><circle cx="16" cy="16" r="7.5"/><circle cx="16" cy="16" r=".8" fill="currentColor"/>',
+  iron: '<path d="M4 23h22c0-6-3.5-11-10-11h-5"/><path d="M4 23c0-6 3-9 8-9h14"/><circle cx="15" cy="19" r=".9" fill="currentColor"/><circle cx="19" cy="19" r=".9" fill="currentColor"/>',
+  dryclean: '<circle cx="16" cy="16" r="10"/><text x="16" y="20.5" font-size="11" text-anchor="middle" fill="currentColor" stroke="none" font-family="serif" font-style="italic">P</text>',
+  hang: '<rect x="5" y="5" width="22" height="22" rx="1"/><path d="M5 11c4 4 18 4 22 0"/><path d="M16 15v9"/>',
+};
+
+function care(name, cls = '') {
+  return `<svg class="care ${cls}" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CARE[name] || CARE.wash}</svg>`;
+}
+
+module.exports = { icon, care, ICON_NAMES: NAMES, CARE_NAMES: Object.keys(CARE) };

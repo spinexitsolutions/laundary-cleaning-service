@@ -1,0 +1,19 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Service areas', heading: s.areas_title, lead: 'We pick up and deliver across these areas. Check your pincode below.' }) %>
+<section class="section-tight">
+  <div class="wrap">
+    <div class="areas-card">
+      <div>
+        <form class="pin-form" data-pincheck style="margin-top:0"><input class="input" name="pin" inputmode="numeric" maxlength="6" placeholder="Enter your pincode" required aria-label="Pincode"><button class="btn btn-sm">Check <span class="btn-dot" style="width:30px;height:30px"><%- icon('arrow') %></span></button></form>
+        <div class="pin-result" data-pinresult></div>
+      </div>
+      <div class="areas-map" style="min-height:200px"><div class="grid-bg"></div><span class="ping" style="left:30%;top:40%"></span><span class="ping" style="left:65%;top:60%"></span></div>
+    </div>
+    <div class="table-scroll" style="margin-top:50px"><table class="price-table">
+      <thead><tr><th>Area</th><th>Pincodes</th><th>Pickup & delivery</th></tr></thead>
+      <tbody><% areas.forEach(a => { %><tr><td><b><%= a.name %></b></td><td class="mono" style="font-size:.85rem;white-space:normal"><%= a.pincodes %></td><td class="p"><%= a.delivery_fee ? H.money(a.delivery_fee) : 'FREE' %></td></tr><% }) %></tbody>
+    </table></div>
+    <p style="color:var(--muted);margin-top:20px">Pickup & delivery is free on orders above <%= H.money(s.free_delivery_above) %> in every area.</p>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= meta.title %></title>
+<meta name="description" content="<%= meta.desc %>">
+<meta property="og:title" content="<%= meta.title %>">
+<meta property="og:description" content="<%= meta.desc %>">
+<% if (s.og_image) { %><meta property="og:image" content="<%= s.og_image %>"><% } %>
+<meta name="theme-color" content="<%= s.color_paper %>">
+<% if (s.favicon) { %><link rel="icon" href="<%= s.favicon %>"><% } else { %><link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 40'><path d='M16 0 32 9v31H0V9Z' fill='%23111827'/><circle cx='16' cy='10' r='3' fill='white'/></svg>"><% } %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/site.css?v=1">
+<style>:root{--primary:<%= s.color_primary %>;--accent:<%= s.color_accent %>;--ink:<%= s.color_ink %>;--paper:<%= s.color_paper %>;}</style>
+<%- s.head_scripts || '' %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<% if (s.announcement) { %>
+<div class="announce"><a href="<%= s.announcement_link || '#' %>"><%- icon('sparkles') %> <%= s.announcement %> <%- icon('arrow') %></a></div>
+<% } %>
+<header class="site-header" id="top">
+  <div class="wrap nav">
+    <a href="/" class="brand" aria-label="<%= s.site_name %> home">
+      <% if (s.logo) { %><img src="<%= s.logo %>" alt="<%= s.site_name %>"><% } else { %>
+      <span class="brand-mark"><%= H.initials(s.site_name) %></span>
+      <span><%= s.site_name %><small><%= s.site_tagline %></small></span>
+      <% } %>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <% menu('header').forEach(m => { %>
+        <a href="<%= m.url %>" <%= m.new_tab ? 'target=_blank rel=noopener' : '' %> class="<%= path === m.url || (m.url.length > 1 && path.startsWith(m.url) && !m.url.includes('#')) ? 'active' : '' %>"><%= m.label %></a>
+      <% }) %>
+    </nav>
+    <div class="nav-actions">
+      <a href="/track" class="icon-btn hide-sm" title="Track order" aria-label="Track order"><%- icon('search') %></a>
+      <a href="<%= customer ? '/account' : '/account/login' %>" class="icon-btn hide-sm" title="<%= customer ? 'My account' : 'Sign in' %>" aria-label="Account"><%- icon('user') %></a>
+      <a href="/book" class="btn btn-sm">Book pickup <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+      <button class="icon-btn nav-toggle" aria-label="Open menu" data-drawer-open><%- icon('menu') %></button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-panel">
+    <div class="drawer-top">
+      <a href="/" class="brand" style="color:var(--paper)"><span class="brand-mark" style="background:var(--paper);color:var(--ink)"><%= H.initials(s.site_name) %></span><%= s.site_name %></a>
+      <button class="icon-btn" aria-label="Close menu" data-drawer-close><%- icon('x') %></button>
+    </div>
+    <nav>
+      <a href="/">Home <span>00</span></a>
+      <% menu('header').forEach((m, i) => { %><a href="<%= m.url %>"><%= m.label %> <span><%= String(i + 1).padStart(2, '0') %></span></a><% }) %>
+    </nav>
+    <div class="drawer-foot">
+      <a href="/book" class="btn btn-accent">Book a pickup <span class="btn-dot"><%- icon('arrow-up-right') %></span></a>
+      <a href="<%= customer ? '/account' : '/account/login' %>" class="btn btn-light"><%= customer ? 'My account' : 'Sign in / Register' %> <span class="btn-dot"><%- icon('user') %></span></a>
+      <p><%= s.phone %> · <%= s.email %></p>
+    </div>
+  </div>
+</div>
+<% if (flash.length) { %>
+<div class="toasts">
+  <% flash.forEach(f => { %><div class="toast <%= f.type %>" role="status"><%- icon(f.type === 'error' ? 'info' : 'check') %><span><%= f.msg %></span><button aria-label="Dismiss" onclick="this.parentNode.remove()"><%- icon('x') %></button></div><% }) %>
+</div>
+<% } %>
+<main>

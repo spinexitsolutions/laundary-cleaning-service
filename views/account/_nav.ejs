@@ -1,0 +1,6 @@
+<nav class="acct-nav">
+  <a href="/account" class="<%= active === 'dash' ? 'on' : '' %>"><%- icon('dashboard') %> Dashboard</a>
+  <a href="/book"><%- icon('plus') %> New pickup</a>
+  <a href="/account/profile" class="<%= active === 'profile' ? 'on' : '' %>"><%- icon('user') %> Profile & addresses</a>
+  <form method="post" action="/account/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button><%- icon('logout') %> Sign out</button></form>
+</nav>

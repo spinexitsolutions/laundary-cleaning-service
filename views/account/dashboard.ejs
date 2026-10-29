@@ -1,0 +1,29 @@
+<%- include('../partials/top') %>
+<section class="wrap acct">
+  <%- include('_nav', { active: 'dash' }) %>
+  <div>
+    <span class="kicker">My account</span>
+    <h1 class="h-section" style="margin-top:16px">Hi, <em><%= customer.name.split(' ')[0] %></em>.</h1>
+    <div class="mini-stats">
+      <div class="mini-stat"><small>Total orders</small><b><%= stats.n %></b></div>
+      <div class="mini-stat"><small>In progress</small><b><%= active.length %></b></div>
+      <div class="mini-stat"><small>Total spent</small><b><%= H.money(stats.spent) %></b></div>
+    </div>
+    <h2 class="h-card" style="margin:20px 0 16px">Your orders</h2>
+    <% if (!orders.length) { %>
+      <div class="card empty"><%- care('wash') %><p>No orders yet.</p><a href="/book" class="btn">Book your first pickup <span class="btn-dot"><%- icon('arrow') %></span></a></div>
+    <% } else { %>
+    <div class="order-list">
+      <% orders.forEach(o => { const st = H.STATUS_MAP[o.status]; %>
+      <a href="/account/orders/<%= o.order_no %>" class="order-item">
+        <span class="oi-ic"><%- icon('ticket') %></span>
+        <div><b><%= o.order_no %></b><small><%= o.services %> · pickup <%= H.fmtDate(o.pickup_date) %></small></div>
+        <span class="status-pill" style="--c:<%= st.color %>"><%= st.short %></span>
+        <span class="amt"><%= o.count_at_pickup && !o.total ? 'TBD' : H.money(o.total) %></span>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

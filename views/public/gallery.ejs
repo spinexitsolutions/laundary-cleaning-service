@@ -1,0 +1,7 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Gallery', heading: 'Inside the *atelier.*', lead: '' }) %>
+<section class="section-tight"><div class="wrap">
+  <% if (images.length) { %><div class="gallery"><% images.forEach(g => { %><figure><img src="<%= g.image %>" alt="<%= g.title || '' %>" loading="lazy"><% if (g.title) { %><figcaption><%= g.title %></figcaption><% } %></figure><% }) %></div>
+  <% } else { %><div class="empty"><%- care('hang') %>No photos yet.</div><% } %>
+</div></section>
+<%- include('../partials/bottom') %>

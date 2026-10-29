@@ -1,0 +1,10 @@
+<%- include('_top') %>
+<div class="toolbar"><span class="muted"><%= subs.length %> subscribers</span><div class="sp"></div><a href="/admin/subscribers.csv" class="b"><%- icon('upload') %>Export CSV</a></div>
+<div class="card"><div class="tbl-wrap"><table class="tbl">
+  <thead><tr><th>Email</th><th>Subscribed</th><th></th></tr></thead>
+  <tbody>
+  <% if (!subs.length) { %><tr><td colspan="3" class="empty">No subscribers yet.</td></tr><% } %>
+  <% subs.forEach(x => { %><tr><td class="mono"><%= x.email %></td><td><%= H.fmtDate(x.created_at, true) %></td><td class="r"><form method="post" action="/admin/subscribers/<%= x.id %>/delete"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b ib ghost danger"><%- icon('trash') %></button></form></td></tr><% }) %>
+  </tbody>
+</table></div></div>
+<%- include('_bottom') %>

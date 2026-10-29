@@ -1,0 +1,56 @@
+<%- include('_top') %>
+<% const fmtCell = (c, r) => {
+  const v = r[c.name];
+  if (c.format) return H.esc(c.format(r));
+  if (c.map) return H.esc(c.map[v] || v || '—');
+  if (c.lookup) return H.esc(r[`__${c.name}`]);
+  if (c.type === 'money') return H.money(v);
+  if (c.type === 'date') return v ? H.fmtDate(v) : '—';
+  if (c.type === 'datetime') return v ? H.fmtDate(v, true) : '—';
+  if (c.type === 'bool') return v ? '<span class="pill" style="--c:#157347">Yes</span>' : '<span class="muted">—</span>';
+  if (c.type === 'clip') return `<small class="mono muted">${H.esc(String(v || '').slice(0, 48))}${String(v || '').length > 48 ? '…' : ''}</small>`;
+  return `<span class="${c.mono ? 'mono' : ''}">${H.esc(v ?? '—')}</span>`;
+}; %>
+<% if (R.help) { %><div class="help"><%- R.help %></div><% } %>
+<div class="toolbar">
+  <% if (R.search || R.filter) { %>
+  <form style="display:flex;gap:8px;flex-wrap:wrap">
+    <% if (R.search) { %><input class="in" name="q" value="<%= q %>" placeholder="Search <%= R.title.toLowerCase() %>…" style="width:240px"><% } %>
+    <% if (R.filter) { %><select class="in" name="f" onchange="this.form.submit()" style="width:auto"><option value="">All <%= R.filter.label.toLowerCase() %>s</option><% filterOptions.forEach(o => { %><option value="<%= o.value %>" <%= String(fv) === String(o.value) ? 'selected' : '' %>><%= o.label %></option><% }) %></select><% } %>
+    <button class="b"><%- icon('search') %></button>
+  </form>
+  <% } %>
+  <span class="muted"><%= rows.length %> <%= rows.length === 1 ? R.singular.toLowerCase() : R.title.toLowerCase() %></span>
+  <div class="sp"></div>
+  <a href="/admin/<%= resKey %>/new" class="b dark"><%- icon('plus') %>Add <%= R.singular.toLowerCase() %></a>
+</div>
+<div class="card"><div class="tbl-wrap"><table class="tbl">
+  <thead><tr><% R.list.forEach(c => { %><th><%= c.label %></th><% }) %><th class="r">Actions</th></tr></thead>
+  <tbody>
+  <% if (!rows.length) { %><tr><td colspan="<%= R.list.length + 1 %>" class="empty">Nothing here yet. <a href="/admin/<%= resKey %>/new" style="text-decoration:underline">Add the first one</a>.</td></tr><% } %>
+  <% rows.forEach(r => { %>
+    <tr>
+      <% R.list.forEach(c => { %>
+        <td>
+        <% if (c.type === 'title') { %>
+          <a href="/admin/<%= resKey %>/<%= r.id %>/edit" class="t-title">
+            <% if (c.imageField) { %><span class="thumb"><% if (r[c.imageField]) { %><img src="<%= r[c.imageField] %>" class="thumb" alt=""><% } else { %><%- icon(R.icon) %><% } %></span><% } %>
+            <% if (c.iconField) { %><span class="thumb" style="background:<%= r.color || 'var(--bg)' %>"><%- icon(r[c.iconField]) %></span><% } %>
+            <div><b class="<%= c.mono ? 'mono' : '' %>"><%= r[c.name] || '(untitled)' %></b><% if (c.sub && r[c.sub]) { %><small><%= r[c.sub] %></small><% } %></div>
+          </a>
+        <% } else if (c.type === 'toggle') { %>
+          <button class="switch <%= r[c.name] ? 'on' : '' %>" data-toggle="/admin/<%= resKey %>/<%= r.id %>/toggle/<%= c.name %>" aria-label="Toggle <%= c.label %>"></button>
+        <% } else { %><%- fmtCell(c, r) %><% } %>
+        </td>
+      <% }) %>
+      <td><div class="actions">
+        <% if (R.view) { %><a href="<%= R.view(r) %>" target="_blank" class="b ib ghost" title="View"><%- icon('eye') %></a><% } %>
+        <a href="/admin/<%= resKey %>/<%= r.id %>/edit" class="b ib ghost" title="Edit"><%- icon('edit') %></a>
+        <% if (resKey !== 'staff') { %><form method="post" action="/admin/<%= resKey %>/<%= r.id %>/duplicate"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b ib ghost" title="Duplicate"><%- icon('copy') %></button></form><% } %>
+        <form method="post" action="/admin/<%= resKey %>/<%= r.id %>/delete" onsubmit="return confirm('Delete this <%= R.singular.toLowerCase() %>?')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b ib ghost danger" title="Delete"><%- icon('trash') %></button></form>
+      </div></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table></div></div>
+<%- include('_bottom') %>

@@ -1,0 +1,75 @@
+<%- include('_top') %>
+<% const isNew = !order.id; %>
+<form method="post" action="<%= isNew ? '/admin/orders' : `/admin/orders/${order.id}/edit` %>" id="orderForm">
+<input type="hidden" name="_csrf" value="<%= csrf %>">
+<div class="toolbar"><a href="<%= isNew ? '/admin/orders' : '/admin/orders/' + order.id %>" class="b ghost"><%- icon('arrow-left') %>Back</a></div>
+<div class="grid g-main">
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><h2>Items</h2><div class="sp"></div><span class="muted" style="font-size:12px">Pick a service + item to auto-fill the rate, or type anything custom.</span></div>
+      <div class="tbl-wrap"><table class="tbl li-tbl">
+        <thead><tr><th style="width:24%">Service</th><th>Item</th><th style="width:90px">Qty</th><th style="width:80px">Unit</th><th style="width:110px">Rate</th><th class="r" style="width:110px">Amount</th><th></th></tr></thead>
+        <tbody id="lines"></tbody>
+      </table></div>
+      <div style="padding:14px 20px;display:flex;gap:10px;align-items:center;border-top:1px solid var(--line)">
+        <button type="button" class="b" id="addLine"><%- icon('plus') %>Add line</button>
+        <div class="sp" style="flex:1"></div>
+        <b>Subtotal: <span class="mono" id="subPrev">—</span></b>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Customer</h2></div>
+      <div class="card-b form-grid">
+        <div class="fld"><label>Name *</label><input name="name" value="<%= order.name || '' %>" required></div>
+        <div class="fld"><label>Phone *</label><input name="phone" value="<%= order.phone || '' %>" required></div>
+        <div class="fld"><label>Email</label><input name="email" value="<%= order.email || '' %>"></div>
+        <div class="fld"><label>Pincode</label><input name="pincode" value="<%= order.pincode || '' %>"></div>
+        <div class="fld full"><label>Address</label><textarea name="address" style="min-height:70px"><%= order.address || '' %></textarea></div>
+        <div class="fld full"><label>Customer note</label><input name="notes" value="<%= order.notes || '' %>"></div>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><h2>Schedule</h2></div>
+      <div class="card-b form-grid">
+        <div class="fld"><label>Pickup date</label><input type="date" name="pickup_date" value="<%= order.pickup_date || '' %>"></div>
+        <div class="fld"><label>Pickup slot</label><select name="pickup_slot"><option value="">—</option><% slots.forEach(sl => { %><option <%= order.pickup_slot === sl.label ? 'selected' : '' %>><%= sl.label %></option><% }) %><% if (order.pickup_slot && !slots.find(sl => sl.label === order.pickup_slot)) { %><option selected><%= order.pickup_slot %></option><% } %></select></div>
+        <div class="fld"><label>Delivery date</label><input type="date" name="delivery_date" value="<%= order.delivery_date || '' %>"></div>
+        <div class="fld"><label>Speed</label><select name="delivery_type"><option value="standard">Standard</option><option value="express" <%= order.delivery_type === 'express' ? 'selected' : '' %>>Express</option></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Charges & payment</h2></div>
+      <div class="card-b form-grid">
+        <div class="fld"><label>Coupon</label><input name="coupon_code" value="<%= order.coupon_code || '' %>" style="text-transform:uppercase"></div>
+        <div class="fld"><label>Manual discount</label><input type="number" step="0.01" name="manual_discount" value="<%= isNew ? '' : order.discount %>" placeholder="auto from coupon"></div>
+        <div class="fld full"><label>Pickup & delivery fee</label><input type="number" step="0.01" name="delivery_fee" value="<%= isNew ? '' : order.delivery_fee %>" placeholder="auto from area / settings"><span class="hint">Leave empty to calculate automatically. <%= s.tax_label %> <%= s.tax_percent %>% and express fee are added on save.</span></div>
+        <div class="fld"><label>Payment method</label><select name="payment_method"><% methods.forEach(m => { %><option value="<%= m.code %>" <%= order.payment_method === m.code ? 'selected' : '' %>><%= m.label %></option><% }) %></select></div>
+        <div class="fld"><label>Payment status</label><select name="payment_status"><% H.PAYMENT_STATUSES.forEach(p => { %><option <%= order.payment_status === p ? 'selected' : '' %>><%= p %></option><% }) %></select></div>
+        <% if (isNew) { %><div class="fld"><label>Initial status</label><select name="status"><% H.ORDER_STATUSES.forEach(st => { %><option value="<%= st.key %>" <%= order.status === st.key ? 'selected' : '' %>><%= st.label %></option><% }) %></select></div><% } %>
+        <div class="fld"><label>Assign to</label><select name="assigned_to"><option value="">—</option><% staff.forEach(u => { %><option value="<%= u.id %>" <%= order.assigned_to === u.id ? 'selected' : '' %>><%= u.name %></option><% }) %></select></div>
+        <div class="fld full"><label>Internal notes</label><textarea name="admin_notes" style="min-height:60px"><%= order.admin_notes || '' %></textarea></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sticky-actions"><button class="b dark"><%- icon('check') %><%= isNew ? 'Create order' : 'Save & recalculate' %></button><a href="<%= isNew ? '/admin/orders' : '/admin/orders/' + order.id %>" class="b ghost">Cancel</a></div>
+</form>
+<template id="lineTpl">
+  <tr>
+    <td><select name="li_service" data-svc><option value="">Custom</option><% services.forEach(sv => { %><option value="<%= sv.id %>" data-mode="<%= sv.pricing_mode %>" data-kg="<%= sv.price_per_kg %>"><%= sv.title %></option><% }) %></select></td>
+    <td><input name="li_name" list="" data-name placeholder="Item name"><input type="hidden" name="li_item" data-item></td>
+    <td><input name="li_qty" type="number" step="0.5" min="0" value="1" data-qty></td>
+    <td><input name="li_unit" value="pc" data-unit></td>
+    <td><input name="li_price" type="number" step="0.01" min="0" value="0" data-price></td>
+    <td class="r mono" data-amt>—</td>
+    <td><button type="button" class="b ib ghost" data-rm aria-label="Remove"><%- icon('trash') %></button></td>
+  </tr>
+</template>
+<% services.forEach(sv => { %><datalist id="dl-<%= sv.id %>"><% priced.filter(p => p.service_id === sv.id).forEach(p => { %><option value="<%= p.name %>"><%= p.cat %> · ₹<%= p.price %></option><% }) %></datalist><% }) %>
+<script>
+window.ORDER_LINES = <%- JSON.stringify(items.map(i => ({ service_id: i.service_id, item_id: i.item_id, item_name: i.item_name, unit: i.unit, qty: i.qty, unit_price: i.unit_price }))).replace(/</g, '\\u003c') %>;
+window.PRICED = <%- JSON.stringify(priced).replace(/</g, '\\u003c') %>;
+</script>
+<%- include('_bottom') %>

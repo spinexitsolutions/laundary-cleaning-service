@@ -1,0 +1,90 @@
+<%- include('_top') %>
+<% const st = H.STATUS_MAP[order.status]; const flow = H.ORDER_STATUSES; const idx = flow.findIndex(x => x.key === order.status); %>
+<div class="toolbar">
+  <a href="/admin/orders" class="b ghost"><%- icon('arrow-left') %>Orders</a>
+  <%- include('_status', { status: order.status }) %>
+  <span class="pill <%= order.payment_status %>"><%= order.payment_status %></span>
+  <% if (order.delivery_type === 'express') { %><span class="pill" style="--c:#C05621">Express</span><% } %>
+  <span class="muted" style="font-size:12px">via <%= order.source %> · <%= H.fmtDate(order.created_at, true) %></span>
+  <div class="sp"></div>
+  <a href="/admin/orders/<%= order.id %>/edit" class="b"><%- icon('edit') %>Edit order & items</a>
+  <a href="/admin/orders/<%= order.id %>/invoice" target="_blank" class="b"><%- icon('print') %>Invoice</a>
+  <a href="https://wa.me/<%= order.phone.replace(/\D/g, '').length === 10 ? '91' + order.phone.replace(/\D/g, '') : order.phone.replace(/\D/g, '') %>?text=<%= encodeURIComponent(`Hi ${order.name.split(' ')[0]}, update on your ${s.site_name} order ${order.order_no}: ${st.label}.`) %>" target="_blank" class="b"><%- icon('whatsapp') %>WhatsApp</a>
+</div>
+
+<div class="card" style="margin-bottom:18px">
+  <div class="card-h"><h2>Update status</h2><div class="sp"></div><span class="muted" style="font-size:12px">Click a stage — customers see it on their tracking page</span></div>
+  <form method="post" action="/admin/orders/<%= order.id %>/status" class="card-b" style="display:grid;gap:12px">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="steps-h">
+      <% flow.forEach((f, i) => { %>
+      <button name="status" value="<%= f.key %>" class="<%= f.key === order.status ? 'cur' : (i < idx && order.status !== 'cancelled' ? 'done' : '') %>" style="--c:<%= f.color %>" <%= f.key === 'cancelled' ? 'onclick="return confirm(\'Cancel this order?\')"' : '' %>><i></i><%= f.label %></button>
+      <% }) %>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <input class="in" name="note" placeholder="Optional note shown to customer (e.g. “3 shirts, 1 saree collected”)" style="flex:1;min-width:260px">
+      <label class="chk"><input type="checkbox" name="mark_paid" value="1" checked> Mark paid when delivered</label>
+    </div>
+  </form>
+</div>
+
+<div class="grid g-main">
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><h2>Items</h2><div class="sp"></div><a href="/admin/orders/<%= order.id %>/edit" class="b sm"><%- icon('edit') %>Edit items</a></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Item</th><th>Service</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead>
+        <tbody>
+        <% if (!items.length) { %><tr><td colspan="5" class="empty" style="padding:30px">Customer chose <b>count at pickup</b>. Add items after collection using “Edit items”.</td></tr><% } %>
+        <% items.forEach(it => { %><tr><td><b><%= it.item_name %></b></td><td class="muted"><%= it.service_title %></td><td class="r mono"><%= it.qty %> <%= it.unit %></td><td class="r mono"><%= H.money(it.unit_price) %></td><td class="r mono"><b><%= H.money(it.line_total) %></b></td></tr><% }) %>
+        </tbody>
+      </table></div>
+      <div class="totals">
+        <div><span>Subtotal</span><span class="mono"><%= H.money(order.subtotal) %></span></div>
+        <% if (order.discount) { %><div style="color:var(--ok)"><span>Discount <%= order.coupon_code ? '(' + order.coupon_code + ')' : '' %></span><span class="mono">−<%= H.money(order.discount) %></span></div><% } %>
+        <div><span>Pickup & delivery</span><span class="mono"><%= H.money(order.delivery_fee) %></span></div>
+        <% if (order.express_fee) { %><div><span>Express</span><span class="mono"><%= H.money(order.express_fee) %></span></div><% } %>
+        <div><span><%= s.tax_label %></span><span class="mono"><%= H.money(order.tax) %></span></div>
+        <div class="big"><span>Total</span><span class="mono"><%= H.money(order.total) %></span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Customer & schedule</h2><div class="sp"></div><% if (order.customer_id) { %><a href="/admin/customers/<%= order.customer_id %>" class="b sm"><%- icon('user') %>Profile · <%= customerOrders %> orders</a><% } %></div>
+      <div class="card-b">
+        <dl class="kv">
+          <dt>Name</dt><dd><%= order.name %></dd>
+          <dt>Phone</dt><dd><a href="tel:<%= order.phone %>"><%= order.phone %></a></dd>
+          <dt>Email</dt><dd><%= order.email || '—' %></dd>
+          <dt>Address</dt><dd><%- H.nl2br(order.address) %> — <%= order.pincode %> <a class="muted" target="_blank" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(order.address + ' ' + order.pincode) %>">(map)</a></dd>
+          <dt>Pickup</dt><dd><%= H.fmtDate(order.pickup_date) %> · <%= order.pickup_slot %></dd>
+          <dt>Delivery</dt><dd><%= H.fmtDate(order.delivery_date) %> · <%= order.delivery_type %></dd>
+          <dt>Services</dt><dd><%= order.services %></dd>
+          <dt>Payment</dt><dd><%= order.payment_method %></dd>
+          <dt>Customer note</dt><dd><%= order.notes || '—' %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <form class="card" method="post" action="/admin/orders/<%= order.id %>/meta">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="card-h"><h2>Payment & assignment</h2></div>
+      <div class="card-b" style="display:grid;gap:14px">
+        <div class="fld"><label>Payment status</label><select name="payment_status"><% H.PAYMENT_STATUSES.forEach(p => { %><option <%= order.payment_status === p ? 'selected' : '' %>><%= p %></option><% }) %></select></div>
+        <div class="fld"><label>Assigned to</label><select name="assigned_to"><option value="">— Unassigned —</option><% staff.forEach(u => { %><option value="<%= u.id %>" <%= order.assigned_to === u.id ? 'selected' : '' %>><%= u.name %></option><% }) %></select></div>
+        <div class="fld"><label>Internal notes</label><textarea name="admin_notes" placeholder="Only visible to staff"><%= order.admin_notes || '' %></textarea></div>
+        <button class="b dark" style="justify-content:center">Save</button>
+      </div>
+    </form>
+    <div class="card">
+      <div class="card-h"><h2>Activity</h2></div>
+      <div class="card-b"><ul class="tl">
+        <% history.forEach(h => { const hs = H.STATUS_MAP[h.status] || {}; %><li style="--c:<%= hs.color %>"><b><%= hs.label || h.status %></b><% if (h.note) { %> — <%= h.note %><% } %><small><%= H.fmtDate(h.created_at, true) %><%= h.admin_name ? ' · ' + h.admin_name : '' %></small></li><% }) %>
+      </ul></div>
+    </div>
+    <% if (admin.role === 'admin') { %>
+    <form method="post" action="/admin/orders/<%= order.id %>/delete" onsubmit="return confirm('Permanently delete this order?')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b danger" style="width:100%;justify-content:center"><%- icon('trash') %>Delete order</button></form>
+    <% } %>
+  </div>
+</div>
+<%- include('_bottom') %>

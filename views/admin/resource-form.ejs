@@ -1,0 +1,18 @@
+<%- include('_top') %>
+<% if (R.help) { %><div class="help"><%- R.help %></div><% } %>
+<form method="post" action="/admin/<%= resKey %><%= isNew ? '' : '/' + row.id %>?_csrf=<%= csrf %>" enctype="multipart/form-data">
+  <div class="toolbar"><a href="/admin/<%= resKey %>" class="b ghost"><%- icon('arrow-left') %><%= R.title %></a><div class="sp"></div><% if (!isNew && R.view) { %><a href="<%= R.view(row) %>" target="_blank" class="b"><%- icon('eye') %>View on site</a><% } %></div>
+  <div class="card">
+    <div class="card-b form-grid">
+      <% let lastSec = null; R.fields.forEach(f => { if (f.section && f.section !== lastSec) { lastSec = f.section; %><div class="form-sec full"><%= f.section %></div><% } %>
+        <%- include('_field', { f, v: f.type === 'password' ? '' : row[f.name], opts: f.type === 'select' ? resolveOptions(f) : [], ICON_NAMES }) %>
+      <% }) %>
+    </div>
+  </div>
+  <div class="sticky-actions">
+    <button class="b dark"><%- icon('check') %><%= isNew ? 'Create' : 'Save' %> <%= R.singular.toLowerCase() %></button>
+    <% if (!isNew) { %><button class="b" name="_stay" value="1">Save & keep editing</button><% } %>
+    <a href="/admin/<%= resKey %>" class="b ghost">Cancel</a>
+  </div>
+</form>
+<%- include('_bottom') %>

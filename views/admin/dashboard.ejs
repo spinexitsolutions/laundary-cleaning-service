@@ -1,0 +1,75 @@
+<%- include('_top') %>
+<% const max = Math.max(1, ...days.map(d => d.v)); const totalStatus = byStatus.reduce((a, b) => a + b.n, 0) || 1; %>
+<div class="grid g-4" style="margin-bottom:18px">
+  <div class="card kpi ink"><span class="kic"><%- icon('wallet') %></span><small>Revenue this month</small><b><%= H.money(stats.revenueMonth) %></b><span>All time <%= H.money(stats.revenueAll) %></span></div>
+  <div class="card kpi"><span class="kic"><%- icon('receipt') %></span><small>Orders today</small><b><%= stats.today %></b><span><%= stats.active %> active in pipeline</span></div>
+  <div class="card kpi"><span class="kic"><%- icon('users') %></span><small>Customers</small><b><%= stats.customers %></b><span>+<%= stats.newCustomers %> in the last 30 days</span></div>
+  <div class="card kpi"><span class="kic"><%- icon('chart') %></span><small>Avg. order value</small><b><%= H.money(Math.round(stats.aov)) %></b><span><%= H.money(stats.unpaid) %> delivered but unpaid</span></div>
+</div>
+
+<div class="grid g-main" style="margin-bottom:18px">
+  <div class="card">
+    <div class="card-h"><h2>Revenue — last 14 days</h2><div class="sp"></div><span class="muted mono" style="font-size:12px"><%= H.money(days.reduce((a, d) => a + d.v, 0)) %> · <%= days.reduce((a, d) => a + d.n, 0) %> orders</span></div>
+    <div class="card-b">
+      <div class="chart">
+        <% days.forEach((d, i) => { const dt = new Date(d.d + 'T00:00:00'); %>
+        <div class="col"><div class="bar <%= i === days.length - 1 ? 'today' : '' %>" style="height:<%= Math.max(2, d.v / max * 100) %>%" data-tip="<%= H.money(d.v) %> · <%= d.n %> orders"></div><span class="lb"><%= dt.getDate() %></span></div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2>Pipeline</h2></div>
+    <div class="card-b">
+      <% H.ORDER_STATUSES.forEach(st => { const n = (byStatus.find(b => b.status === st.key) || {}).n || 0; %>
+      <a class="donut-row" href="/admin/orders?status=<%= st.key %>"><i style="background:<%= st.color %>"></i><%= st.label %><b><%= n %></b></a>
+      <div class="meter" style="margin:0 0 4px"><i style="width:<%= n / totalStatus * 100 %>%;background:<%= st.color %>"></i></div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<div class="grid g-main">
+  <div class="card">
+    <div class="card-h"><h2>Recent orders</h2><div class="sp"></div><a href="/admin/orders" class="b sm">View all</a></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Order</th><th>Customer</th><th>Pickup</th><th>Status</th><th class="r">Total</th></tr></thead>
+      <tbody>
+      <% recent.forEach(o => { %>
+        <tr class="row-link" data-href="/admin/orders/<%= o.id %>"><td><b class="mono"><%= o.order_no %></b><br><small class="muted"><%= H.fmtDate(o.created_at, true) %></small></td><td><%= o.name %><br><small class="muted"><%= o.phone %></small></td><td><%= H.fmtDate(o.pickup_date) %><br><small class="muted"><%= o.pickup_slot %></small></td><td><%- include('_status', { status: o.status }) %></td><td class="r mono"><b><%= H.money(o.total) %></b></td></tr>
+      <% }) %>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><%- icon('truck') %><h2>Today’s pickups</h2><div class="sp"></div><span class="pill" style="--c:#2B6CB0"><%= pickups.length %></span></div>
+      <div class="card-b" style="padding:8px 20px">
+        <% if (!pickups.length) { %><p class="muted">No pickups scheduled today.</p><% } %>
+        <% pickups.forEach(o => { %><a href="/admin/orders/<%= o.id %>" class="donut-row" style="border-bottom:1px solid var(--line)"><span><b><%= o.name %></b><br><small class="muted"><%= o.pickup_slot %> · <%= o.pincode %></small></span><b><%= o.order_no %></b></a><% }) %>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><%- icon('box') %><h2>Due for delivery today</h2><div class="sp"></div><span class="pill" style="--c:#C05621"><%= deliveries.length %></span></div>
+      <div class="card-b" style="padding:8px 20px">
+        <% if (!deliveries.length) { %><p class="muted">Nothing due today.</p><% } %>
+        <% deliveries.forEach(o => { %><a href="/admin/orders/<%= o.id %>" class="donut-row" style="border-bottom:1px solid var(--line)"><span><b><%= o.name %></b><br><small class="muted"><%= H.STATUS_MAP[o.status].label %></small></span><b><%= o.order_no %></b></a><% }) %>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><%- icon('chart') %><h2>Top services</h2></div>
+      <div class="card-b">
+        <% const tmax = Math.max(1, ...topServices.map(t => t.v)); topServices.forEach(t => { %>
+        <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px"><span><%= t.t %></span><b class="mono"><%= H.money(t.v) %></b></div><div class="meter"><i style="width:<%= t.v / tmax * 100 %>%"></i></div></div>
+        <% }) %>
+      </div>
+    </div>
+    <% if (messages.length) { %>
+    <div class="card">
+      <div class="card-h"><%- icon('inbox') %><h2>New messages</h2><div class="sp"></div><a href="/admin/messages" class="b sm">Inbox</a></div>
+      <div class="card-b" style="padding:8px 20px"><% messages.forEach(m => { %><a href="/admin/messages?open=<%= m.id %>" class="donut-row" style="border-bottom:1px solid var(--line);display:block"><b><%= m.name %></b> <small class="muted">— <%= m.subject %></small><br><small class="muted"><%= m.message.slice(0, 80) %>…</small></a><% }) %></div>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('_bottom') %>

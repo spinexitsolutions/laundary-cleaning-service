@@ -1,0 +1,17 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'FAQ', heading: 'Questions, *answered.*', lead: 'Everything about pickups, pricing and how we care for your clothes.' }) %>
+<section class="section-tight">
+  <div class="wrap faq-grid">
+    <div class="faq-side">
+      <div class="pill-links"><% Object.keys(groups).forEach(g => { %><a class="chip" href="#<%= H.slugify(g) %>"><%= g %></a><% }) %></div>
+      <a class="help-card" href="tel:<%= s.phone.replace(/\s/g, '') %>"><%- icon('phone') %><div><small>Can’t find it? Call us</small><b><%= s.phone %></b></div></a>
+    </div>
+    <div>
+      <% Object.entries(groups).forEach(([g, list]) => { %>
+      <h2 id="<%= H.slugify(g) %>" class="h-card" style="margin:0 0 10px;padding-top:20px;font-size:2rem"><%= g %></h2>
+      <div class="faq" style="margin-bottom:40px"><% list.forEach(f => { %><details><summary><%= f.question %><span class="plus"><%- icon('plus') %></span></summary><div class="answer"><%= f.answer %></div></details><% }) %></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

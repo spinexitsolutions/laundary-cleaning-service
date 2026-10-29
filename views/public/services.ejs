@@ -1,0 +1,18 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Services', heading: 'Six ways to *never* do laundry again.', lead: 'Pick one, or mix and match in a single pickup. Every order is tagged, tracked and hand-checked.' }) %>
+<section class="section-tight">
+  <div class="wrap">
+    <div class="svc-rows">
+      <% services.forEach((sv, i) => { %>
+      <a href="/services/<%= sv.slug %>" class="svc-row rv">
+        <span class="n">N°<%= String(i + 1).padStart(3, '0') %></span>
+        <h3><%= sv.title %><small><%= sv.turnaround %> · from <%= H.money(sv.pricing_mode === 'per_kg' ? sv.price_per_kg : sv.starting_price) %>/<%= sv.pricing_mode === 'per_kg' ? 'kg' : 'item' %></small></h3>
+        <p><%= sv.short_desc %></p>
+        <span class="tag-go"><%- icon('arrow-up-right') %></span>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<section class="wrap"><div class="cta-band rv"><%- care('dry', 'k1') %><h2 class="h-section" style="max-width:16ch"><%- H.emph(s.cta_title) %></h2><p><%= s.cta_text %></p><a href="/book" class="btn"><%= s.cta_button %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a></div></section>
+<%- include('../partials/bottom') %>

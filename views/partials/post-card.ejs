@@ -1,0 +1,8 @@
+<a href="/blog/<%= p.slug %>" class="post-card rv rv-d<%= i % 3 %>">
+  <div class="post-cover v<%= i % 3 %>">
+    <% if (p.cover) { %><img src="<%= p.cover %>" alt="<%= p.title %>" loading="lazy"><% } else { %><%- care(['wash','iron','dryclean','dry','bleach','hang'][p.id % 6]) %><% } %>
+  </div>
+  <div class="post-meta"><span><%= p.category || 'Journal' %></span><span>·</span><span><%= H.fmtDate(p.published_at) %></span></div>
+  <h3><%= p.title %></h3>
+  <p><%= p.excerpt %></p>
+</a>

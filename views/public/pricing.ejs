@@ -1,0 +1,48 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Pricing', heading: 'Honest prices, *printed* plainly.', lead: `No surprises at the door. ${s.tax_label} (${s.tax_percent}%) applies. Free pickup & delivery above ${H.money(s.free_delivery_above)}.` }) %>
+<% const perItem = pb.services.filter(x => x.pricing_mode === 'per_item'); const kgSvcs = pb.services.filter(x => x.pricing_mode === 'per_kg'); %>
+<section class="section-tight">
+  <div class="wrap">
+    <% if (kgSvcs.length) { %>
+    <span class="kicker">By weight</span>
+    <div class="tags" style="margin:50px 0 80px">
+      <% kgSvcs.forEach(k => { %>
+      <div class="tag-card" style="--tc:<%= k.color %>;min-height:0">
+        <span class="hole"></span><span class="tag-icon"><%- icon(k.icon) %></span>
+        <h3 class="h-card"><%= k.title %></h3><p><%= k.short_desc %></p>
+        <div class="tag-foot"><div class="tag-price"><small>Per kilogram</small><b><%= H.money(k.price_per_kg) %></b><span>/kg</span></div><a href="/book?service=<%= k.id %>" class="tag-go" aria-label="Book"><%- icon('arrow-up-right') %></a></div>
+      </div>
+      <% }) %>
+      <div class="tag-card" style="--tc:var(--accent-soft);min-height:0;background:var(--ink);color:var(--paper)">
+        <span class="hole" style="background:var(--ink)"></span>
+        <h3 class="h-card" style="margin-top:10px">Not sure how much you have?</h3>
+        <p style="color:color-mix(in oklab,var(--paper) 60%,transparent)">Just book a pickup — we weigh and count at your door and confirm the exact bill before we start.</p>
+        <div class="tag-foot" style="border-color:rgba(255,255,255,.2)"><b>Count at pickup</b><a href="/book" class="tag-go" style="background:var(--accent)"><%- icon('arrow-up-right') %></a></div>
+      </div>
+    </div>
+    <% } %>
+    <span class="kicker">Per item</span>
+    <div class="price-tabs" style="margin-top:30px">
+      <button class="price-tab on" data-ptab="all">All</button>
+      <% pb.cats.forEach(c => { %><button class="price-tab" data-ptab="<%= c.id %>"><%= c.name %></button><% }) %>
+    </div>
+    <div class="table-scroll">
+      <table class="price-table">
+        <thead><tr><th>Item</th><% perItem.forEach(sv => { %><th><%= sv.title %></th><% }) %></tr></thead>
+        <tbody>
+        <% pb.cats.forEach(c => { const its = pb.items.filter(it => it.category_id === c.id && pb.pmap[it.id]); if (!its.length) return; %>
+          <tr class="cat-row" data-pcat="<%= c.id %>"><td colspan="<%= perItem.length + 1 %>"><%= c.name %></td></tr>
+          <% its.forEach(it => { %>
+          <tr data-pcat="<%= c.id %>"><td><%= it.name %> <span class="mono" style="color:var(--muted);font-size:.78rem">/<%= it.unit %></span></td>
+            <% perItem.forEach(sv => { const p = pb.pmap[it.id][sv.id]; %><td class="p"><%= p != null ? H.money(p) : '—' %></td><% }) %>
+          </tr>
+          <% }) %>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:.9rem;margin-top:24px">Prices are inclusive of standard stain treatment. Heavy embellishment, leather and bridal pieces may be quoted after inspection.</p>
+  </div>
+</section>
+<section class="wrap"><div class="cta-band rv"><%- care('dry', 'k1') %><h2 class="h-section" style="max-width:16ch"><%- H.emph(s.cta_title) %></h2><p><%= s.cta_text %></p><a href="/book" class="btn"><%= s.cta_button %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a></div></section>
+<%- include('../partials/bottom') %>

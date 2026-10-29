@@ -1,0 +1,42 @@
+<%- include('_top') %>
+<% const qs = (o) => { const p = new URLSearchParams({ ...q, ...o }); [...p.keys()].forEach(k => { if (!p.get(k)) p.delete(k); }); return p.toString(); }; const all = Object.values(counts).reduce((a, b) => a + b, 0); %>
+<div class="toolbar">
+  <div class="seg">
+    <a href="/admin/orders?<%= qs({ status: '', page: '' }) %>" class="<%= !q.status ? 'on' : '' %>">All <em><%= all %></em></a>
+    <% H.ORDER_STATUSES.forEach(st => { %><a href="/admin/orders?<%= qs({ status: st.key, page: '' }) %>" class="<%= q.status === st.key ? 'on' : '' %>"><%= st.short %> <em><%= counts[st.key] || 0 %></em></a><% }) %>
+  </div>
+</div>
+<form class="toolbar card" style="padding:12px" method="get">
+  <input type="hidden" name="status" value="<%= q.status || '' %>">
+  <input class="in" name="q" value="<%= q.q || '' %>" placeholder="Order no, name, phone, email" style="max-width:280px">
+  <select class="in" name="payment" style="max-width:150px"><option value="">Any payment</option><% H.PAYMENT_STATUSES.forEach(p => { %><option <%= q.payment === p ? 'selected' : '' %>><%= p %></option><% }) %></select>
+  <label class="muted" style="font-size:12px">From <input class="in" type="date" name="from" value="<%= q.from || '' %>" style="width:auto"></label>
+  <label class="muted" style="font-size:12px">To <input class="in" type="date" name="to" value="<%= q.to || '' %>" style="width:auto"></label>
+  <label class="muted" style="font-size:12px">Pickup <input class="in" type="date" name="pickup" value="<%= q.pickup || '' %>" style="width:auto"></label>
+  <button class="b dark"><%- icon('search') %>Filter</button>
+  <a href="/admin/orders" class="b ghost">Reset</a>
+  <div class="sp"></div>
+  <a href="/admin/orders.csv?<%= qs({ page: '' }) %>" class="b"><%- icon('upload') %>Export CSV</a>
+</form>
+<div class="card">
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>Order</th><th>Customer</th><th>Services</th><th>Pickup</th><th>Status</th><th>Payment</th><th>Staff</th><th class="r">Total</th></tr></thead>
+    <tbody>
+    <% if (!orders.length) { %><tr><td colspan="8" class="empty">No orders match these filters.</td></tr><% } %>
+    <% orders.forEach(o => { %>
+      <tr class="row-link" data-href="/admin/orders/<%= o.id %>">
+        <td><b class="mono"><%= o.order_no %></b><br><small class="muted"><%= H.fmtDate(o.created_at, true) %></small></td>
+        <td><b><%= o.name %></b><br><small class="muted"><%= o.phone %> · <%= o.pincode %></small></td>
+        <td style="max-width:220px"><small><%= o.services %></small><% if (o.delivery_type === 'express') { %> <span class="pill" style="--c:#C05621">Express</span><% } %></td>
+        <td><%= H.fmtDate(o.pickup_date) %><br><small class="muted"><%= o.pickup_slot %></small></td>
+        <td><%- include('_status', { status: o.status }) %></td>
+        <td><span class="pill <%= o.payment_status %>"><%= o.payment_status %></span></td>
+        <td><small><%= o.staff || '—' %></small></td>
+        <td class="r mono"><b><%= o.count_at_pickup && !o.total ? 'TBD' : H.money(o.total) %></b></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+  <% if (pages > 1) { %><div class="pager"><% for (let i = 1; i <= pages; i++) { %><a class="b sm <%= i === page ? 'dark' : '' %>" href="/admin/orders?<%= qs({ page: i }) %>"><%= i %></a><% } %></div><% } %>
+</div>
+<%- include('_bottom') %>

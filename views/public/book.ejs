@@ -1,0 +1,122 @@
+<%- include('../partials/top', { bodyClass: 'booking-page' }) %>
+<%
+  const data = {
+    services: pb.services.map(x => ({ id: x.id, title: x.title, icon: x.icon, color: x.color, mode: x.pricing_mode, kg: x.price_per_kg, tagline: x.tagline })),
+    cats: pb.cats.map(c => ({ id: c.id, name: c.name })),
+    items: pb.items.map(it => ({ id: it.id, name: it.name, unit: it.unit, cat: it.category_id, prices: pb.pmap[it.id] || {} })),
+    preselect: preselect, minOrder: Number(s.min_order || 0),
+  };
+  const dayFmt = (d) => { const x = new Date(d + 'T00:00:00'); return { wd: x.toLocaleDateString('en-IN', { weekday: 'short' }), d: x.getDate(), m: x.toLocaleDateString('en-IN', { month: 'short' }) }; };
+%>
+<section class="wrap">
+  <div class="book-wrap">
+    <form method="post" action="/book" id="bookForm" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="cart" id="cartField">
+      <div class="crumbs"><a href="/">Home</a> / <span>Book a pickup</span></div>
+      <% if (s.booking_enabled !== '1') { %><div class="card" style="margin-bottom:24px;background:var(--accent-soft)">Online booking is paused right now. Please call <b><%= s.phone %></b> or WhatsApp us.</div><% } %>
+      <div class="stepper" role="tablist">
+        <button type="button" data-goto="0" class="on"><span>Step 01</span>Services</button>
+        <button type="button" data-goto="1"><span>Step 02</span>Items</button>
+        <button type="button" data-goto="2"><span>Step 03</span>Pickup</button>
+        <button type="button" data-goto="3"><span>Step 04</span>Details</button>
+      </div>
+
+      <!-- 1. services -->
+      <div class="panel on" data-panel="0">
+        <h2>What needs <em>cleaning</em>?</h2>
+        <p class="sub">Select one or more — they can all go in the same pickup.</p>
+        <div class="svc-pick">
+          <% pb.services.forEach(sv => { %>
+          <button type="button" class="svc-opt" data-svc="<%= sv.id %>">
+            <span class="tick"><%- icon('check') %></span>
+            <span class="ic-box" style="background:<%= sv.color %>"><%- icon(sv.icon) %></span>
+            <b><%= sv.title %></b>
+            <small><%= sv.pricing_mode === 'per_kg' ? H.money(sv.price_per_kg) + '/kg' : 'From ' + H.money(sv.starting_price) + '/item' %> · <%= sv.turnaround %></small>
+          </button>
+          <% }) %>
+        </div>
+        <div class="panel-nav"><span class="mono" style="color:var(--muted);font-size:.8rem" data-svc-count>No service selected</span><button type="button" class="btn" data-next>Continue <span class="btn-dot"><%- icon('arrow') %></span></button></div>
+      </div>
+
+      <!-- 2. items -->
+      <div class="panel" data-panel="1">
+        <h2>Add your <em>items</em></h2>
+        <p class="sub">Optional, but it gives you an instant estimate. You can always change things at pickup.</p>
+        <div id="itemBlocks"></div>
+        <label class="count-later"><input type="checkbox" id="countLater"><div><b>Skip — count everything at pickup</b><span>Our valet will count & weigh your clothes at the door and share the exact bill before cleaning starts.</span></div></label>
+        <div class="panel-nav"><button type="button" class="btn btn-ghost" data-prev>Back</button><button type="button" class="btn" data-next>Continue <span class="btn-dot"><%- icon('arrow') %></span></button></div>
+      </div>
+
+      <!-- 3. schedule -->
+      <div class="panel" data-panel="2">
+        <h2>When should we <em>come by</em>?</h2>
+        <p class="sub">Choose a pickup date and a 2-hour window.</p>
+        <div class="field" style="max-width:340px"><label for="pincode">Pincode</label><input id="pincode" name="pincode" inputmode="numeric" maxlength="6" value="<%= prefill.pincode || '' %>" placeholder="e.g. 110016" required></div>
+        <div class="pin-result" id="pinMsg" style="margin-top:8px"></div>
+        <span class="group-title">Pickup date</span>
+        <div class="date-pick">
+          <% days.forEach((d, i) => { const f = dayFmt(d); %>
+          <label class="date-opt"><input type="radio" name="pickup_date" value="<%= d %>" <%= i === 0 ? 'checked' : '' %>><span><small><%= i === 0 ? 'Today' : i === 1 ? 'Tmrw' : f.wd %></small><b><%= f.d %></b><small><%= f.m %></small></span></label>
+          <% }) %>
+        </div>
+        <span class="group-title">Time slot</span>
+        <div class="slot-grid">
+          <% slots.forEach((sl, i) => { %>
+          <label class="slot-opt"><input type="radio" name="pickup_slot" value="<%= sl.id %>" data-end="<%= sl.end_time %>" <%= i === 0 ? 'checked' : '' %>><span><%- icon('clock') %><%= sl.label %></span></label>
+          <% }) %>
+        </div>
+        <span class="group-title">Delivery speed</span>
+        <div class="radio-grid">
+          <label class="radio-card"><input type="radio" name="delivery_type" value="standard" checked><span><%- icon('truck') %><div><b>Standard</b><small>Back in <%= s.standard_days %> days · included</small></div></span></label>
+          <label class="radio-card"><input type="radio" name="delivery_type" value="express"><span><%- icon('sparkles') %><div><b>Express 24h</b><small>Next-day delivery · +<%= H.money(s.express_fee) %></small></div></span></label>
+        </div>
+        <div class="panel-nav"><button type="button" class="btn btn-ghost" data-prev>Back</button><button type="button" class="btn" data-next>Continue <span class="btn-dot"><%- icon('arrow') %></span></button></div>
+      </div>
+
+      <!-- 4. details -->
+      <div class="panel" data-panel="3">
+        <h2>Where do we <em>pick up</em>?</h2>
+        <p class="sub"><% if (!customer) { %>Have an account? <a href="/account/login?next=/book" class="link-arrow">Sign in</a> to auto-fill.<% } else { %>Booking as <b><%= customer.name %></b>.<% } %></p>
+        <% if (addresses.length) { %>
+        <div class="saved-addr"><% addresses.forEach(a => { %><button type="button" class="chip" data-addr='<%- JSON.stringify({ address: a.address, pincode: a.pincode, landmark: a.landmark }).replace(/'/g, "&#39;") %>'><%- icon('home') %><%= a.label %></button><% }) %></div>
+        <% } %>
+        <div class="form-grid">
+          <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" value="<%= prefill.name || '' %>" required autocomplete="name"></div>
+          <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" value="<%= prefill.phone || '' %>" required autocomplete="tel" placeholder="10-digit mobile"></div>
+          <div class="field full"><label for="f-email">Email (for receipts)</label><input id="f-email" name="email" type="email" value="<%= prefill.email || '' %>" autocomplete="email"></div>
+          <div class="field full"><label for="f-address">Address</label><textarea id="f-address" name="address" rows="3" required autocomplete="street-address" style="min-height:96px"><%= prefill.address || '' %></textarea></div>
+          <div class="field"><label for="f-landmark">Landmark</label><input id="f-landmark" name="landmark"></div>
+          <div class="field"><label for="f-pay">Payment</label><select id="f-pay" name="payment_method"><% methods.forEach(m => { %><option value="<%= m.code %>"><%= m.label %></option><% }) %></select></div>
+          <div class="field full"><label for="f-notes">Notes for our team</label><textarea id="f-notes" name="notes" rows="2" style="min-height:80px" placeholder="Gate code, stain details, fragrance-free…"></textarea></div>
+          <% if (customer) { %><label class="check full"><input type="checkbox" name="save_address" value="1"> Save this address to my account</label><% } %>
+        </div>
+        <input type="hidden" name="coupon" id="couponField">
+        <div class="panel-nav"><button type="button" class="btn btn-ghost" data-prev>Back</button><button type="submit" class="btn btn-accent" <%= s.booking_enabled !== '1' ? 'disabled' : '' %>>Confirm pickup <span class="btn-dot"><%- icon('check') %></span></button></div>
+      </div>
+    </form>
+
+    <aside class="summary" id="summary">
+      <div class="receipt">
+        <div class="receipt-head"><b>Your order</b><small>ESTIMATE · <span id="sumDate">—</span></small></div>
+        <div class="sum-lines" id="sumLines"><div class="sum-empty">Pick a service to begin.</div></div>
+        <div class="sum-tot">
+          <div class="sum-line"><span>Subtotal</span><span id="tSub">—</span></div>
+          <div class="sum-line disc" id="rowDisc" hidden><span>Discount</span><span id="tDisc"></span></div>
+          <div class="sum-line"><span>Pickup & delivery</span><span id="tDel">—</span></div>
+          <div class="sum-line" id="rowExp" hidden><span>Express</span><span id="tExp"></span></div>
+          <div class="sum-line"><span><%= s.tax_label %> (<%= s.tax_percent %>%)</span><span id="tTax">—</span></div>
+          <div class="sum-line big"><span>Total</span><span id="tTot">—</span></div>
+        </div>
+        <div class="coupon-row"><input id="couponInput" placeholder="PROMO CODE" aria-label="Promo code"><button type="button" id="couponBtn">APPLY</button></div>
+        <div class="coupon-msg" id="couponMsg"></div>
+        <div class="barcode" style="height:34px"></div>
+      </div>
+      <div class="summary-note"><%- icon('shield') %><span>Pay only on delivery. Free cancellation until pickup. Every garment insured.</span></div>
+    </aside>
+  </div>
+</section>
+<div class="mobile-sum"><div><small>ESTIMATED TOTAL</small><b id="mTot"><%= s.currency %>0</b></div><a href="#summary" class="btn btn-sm btn-accent" style="min-height:40px">View summary</a></div>
+<script>window.BOOK = <%- JSON.stringify(data).replace(/</g, '\\u003c') %>;</script>
+<script src="/static/js/book.js?v=1" defer></script>
+<%- include('../partials/bottom') %>

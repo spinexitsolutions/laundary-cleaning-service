@@ -1,0 +1,29 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Track order', heading: 'Where’s my *laundry?*', lead: 'Enter your order number and the phone number you booked with.' }) %>
+<section class="section-tight">
+  <div class="wrap">
+    <form class="track-form" method="get" action="/track">
+      <div class="field"><label for="t-o">Order number</label><input id="t-o" name="order" value="<%= q.order %>" placeholder="<%= s.order_prefix %>-2041" required class="mono"></div>
+      <div class="field"><label for="t-p">Phone</label><input id="t-p" name="phone" value="<%= q.phone %>" placeholder="Phone used for booking" required></div>
+      <button class="btn">Track <span class="btn-dot"><%- icon('search') %></span></button>
+    </form>
+    <% if (error) { %><p class="pin-result no" style="margin-top:20px"><%= error %></p><% } %>
+    <% if (order) { %>
+      <div style="margin-top:60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+        <h2 class="h-section" style="font-size:2.6rem">Order <span class="mono" style="font-size:.7em"><%= order.order_no %></span></h2>
+        <span class="status-pill" style="--c:<%= H.STATUS_MAP[order.status].color %>"><%= H.STATUS_MAP[order.status].label %></span>
+      </div>
+      <%- include('../partials/progress', { order }) %>
+      <div class="svc-layout" style="margin-top:30px">
+        <div><%- include('../partials/ticket', { order }) %></div>
+        <div class="card">
+          <span class="label">Updates</span>
+          <ul class="timeline" style="margin-top:20px">
+            <% history.forEach(h => { %><li><b><%= (H.STATUS_MAP[h.status] || {}).label || h.status %></b><small><%= H.fmtDate(h.created_at, true) %></small><% if (h.note) { %><p><%= h.note %></p><% } %></li><% }) %>
+          </ul>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

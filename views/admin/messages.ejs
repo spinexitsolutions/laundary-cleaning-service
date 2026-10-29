@@ -1,0 +1,19 @@
+<%- include('_top') %>
+<div class="card">
+  <% if (!messages.length) { %><div class="empty">No messages yet. Contact-form submissions will appear here.</div><% } %>
+  <% messages.forEach(m => { %>
+  <div class="msg <%= m.is_read ? '' : 'unread' %>" id="m<%= m.id %>">
+    <span class="av-sm"><%= H.initials(m.name) %></span>
+    <div>
+      <b><%= m.name %></b> <span class="muted">· <%= m.subject || 'No subject' %> · <%= H.fmtDate(m.created_at, true) %></span>
+      <div class="muted" style="font-size:12.5px"><% if (m.email) { %><a href="mailto:<%= m.email %>?subject=Re: <%= encodeURIComponent(m.subject || '') %>"><%= m.email %></a><% } %> <% if (m.phone) { %>· <a href="tel:<%= m.phone %>"><%= m.phone %></a><% } %></div>
+      <p><%= m.message %></p>
+    </div>
+    <div style="display:flex;gap:4px">
+      <form method="post" action="/admin/messages/<%= m.id %>/read"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b sm"><%= m.is_read ? 'Mark unread' : 'Mark read' %></button></form>
+      <form method="post" action="/admin/messages/<%= m.id %>/delete" onsubmit="return confirm('Delete message?')"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="b sm ib danger"><%- icon('trash') %></button></form>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<%- include('_bottom') %>

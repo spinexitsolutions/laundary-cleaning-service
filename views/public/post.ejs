@@ -1,0 +1,18 @@
+<%- include('../partials/top') %>
+<section class="page-hero">
+  <div class="wrap" style="max-width:900px">
+    <div class="crumbs"><a href="/">Home</a> / <a href="/blog">Journal</a> / <span><%= post.category %></span></div>
+    <h1 class="h-page rv" style="font-size:clamp(2.4rem,5.5vw,4.6rem)"><%= post.title %></h1>
+    <div class="post-meta" style="margin-top:26px"><span><%= post.author %></span><span>·</span><span><%= H.fmtDate(post.published_at) %></span></div>
+  </div>
+</section>
+<article class="section-tight">
+  <div class="wrap" style="max-width:900px">
+    <% if (post.cover) { %><img src="<%= post.cover %>" alt="" style="border-radius:24px;width:100%;margin-bottom:40px"><% } %>
+    <div class="prose"><%- post.content %></div>
+  </div>
+</article>
+<% if (more.length) { %>
+<section class="section-tight" style="padding-top:0"><div class="wrap"><span class="kicker">Keep reading</span><div class="posts" style="margin-top:30px"><% more.forEach((p, i) => { %><%- include('../partials/post-card', { p, i }) %><% }) %></div></div></section>
+<% } %>
+<%- include('../partials/bottom') %>

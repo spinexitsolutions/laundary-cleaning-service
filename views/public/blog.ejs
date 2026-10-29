@@ -1,0 +1,10 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'Journal', heading: s.blog_title, lead: 'Fabric care tips, stain guides and stories from the atelier.' }) %>
+<section class="section-tight">
+  <div class="wrap">
+    <% if (cats.length) { %><div class="pill-links" style="margin-bottom:40px"><a class="chip" href="/blog" style="<%= !cat ? 'background:var(--ink);color:var(--paper)' : '' %>">All</a><% cats.forEach(c => { %><a class="chip" href="/blog?category=<%= encodeURIComponent(c) %>" style="<%= cat === c ? 'background:var(--ink);color:var(--paper)' : '' %>"><%= c %></a><% }) %></div><% } %>
+    <% if (posts.length) { %><div class="posts"><% posts.forEach((p, i) => { %><%- include('../partials/post-card', { p, i }) %><% }) %></div>
+    <% } else { %><div class="empty"><%- care('wash') %>No posts yet.</div><% } %>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

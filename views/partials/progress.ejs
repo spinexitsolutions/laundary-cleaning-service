@@ -1,0 +1,12 @@
+<% const flow = H.ORDER_STATUSES.filter(x => x.key !== 'cancelled'); const idx = flow.findIndex(x => x.key === order.status);
+   const icons = ['receipt','calendar','truck','washer','box','route','check']; %>
+<% if (order.status === 'cancelled') { %>
+  <div class="card" style="background:#FEE4E2;border-color:#FDA29B;margin:30px 0"><b>This order was cancelled.</b> Need help? Call <%= s.phone %>.</div>
+<% } else { %>
+<div class="progress">
+  <span class="bar" style="width:<%= Math.max(0, idx) / (flow.length - 1) * 86 %>%"></span>
+  <% flow.forEach((st, i) => { %>
+  <div class="pstep <%= i < idx ? 'done' : '' %> <%= i === idx ? 'done cur' : '' %>"><i><%- icon(icons[i]) %></i><span><%= st.label %></span></div>
+  <% }) %>
+</div>
+<% } %>

@@ -1,0 +1,30 @@
+<%- include('../partials/top') %>
+<section class="section-tight">
+  <div class="wrap" style="text-align:center">
+    <div class="success-mark"><%- icon('check') %></div>
+    <h1 class="h-page" style="font-size:clamp(2.6rem,6vw,4.8rem)">Pickup <em>booked.</em></h1>
+    <p class="lead" style="margin:20px auto 48px;max-width:50ch">Thank you, <%= order.name.split(' ')[0] %>! We’ll confirm shortly. Keep your order number handy to track progress.</p>
+  </div>
+  <div class="wrap" style="text-align:left"><%- include('../partials/ticket', { order }) %></div>
+  <% if (items.length) { %>
+  <div class="wrap" style="max-width:760px;margin-top:30px">
+    <div class="receipt">
+      <% items.forEach(it => { %><div class="r-row"><span class="r-name"><%= it.qty %> <%= it.unit %> · <%= it.item_name %></span><span class="r-dots"></span><span class="r-price"><%= H.money(it.line_total) %></span></div><% }) %>
+      <div class="sum-tot">
+        <div class="sum-line"><span>Subtotal</span><span><%= H.money(order.subtotal) %></span></div>
+        <% if (order.discount) { %><div class="sum-line disc"><span>Discount (<%= order.coupon_code %>)</span><span>−<%= H.money(order.discount) %></span></div><% } %>
+        <div class="sum-line"><span>Pickup & delivery</span><span><%= order.delivery_fee ? H.money(order.delivery_fee) : 'FREE' %></span></div>
+        <% if (order.express_fee) { %><div class="sum-line"><span>Express</span><span><%= H.money(order.express_fee) %></span></div><% } %>
+        <div class="sum-line"><span><%= s.tax_label %></span><span><%= H.money(order.tax) %></span></div>
+        <div class="sum-line big"><span>Total</span><span><%= H.money(order.total) %></span></div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <div class="wrap" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:44px">
+    <a href="/track?order=<%= order.order_no %>&phone=<%= order.phone.slice(-10) %>" class="btn">Track this order <span class="btn-dot"><%- icon('arrow') %></span></a>
+    <% if (s.whatsapp) { %><a class="btn btn-ghost" target="_blank" rel="noopener" href="https://wa.me/<%= s.whatsapp %>?text=<%= encodeURIComponent(`Hi! I just booked order ${order.order_no}.`) %>">Message us on WhatsApp</a><% } %>
+    <% if (!customer) { %><a href="/account/register" class="btn btn-ghost">Create an account</a><% } %>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

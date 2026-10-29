@@ -1,0 +1,27 @@
+<%- include('../partials/top') %>
+<%- include('../partials/page-hero', { crumb: 'About', heading: s.about_title, lead: s.about_intro }) %>
+<section class="section-tight">
+  <div class="wrap svc-layout">
+    <div class="prose rv"><%- s.about_body %></div>
+    <div>
+      <% if (s.about_image) { %><img src="<%= s.about_image %>" alt="" style="border-radius:28px;width:100%;object-fit:cover"><% } else { %>
+      <div class="machine" style="width:100%"><div class="machine-body"><div class="machine-door"><div class="machine-glass"><div class="drum"><i class="cloth c1"></i><i class="cloth c2"></i><i class="cloth c3"></i><i class="cloth c4"></i></div><div class="water"></div></div></div><span class="machine-hinge"></span></div></div>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% if (s.stats.length) { %>
+<section class="section-tight dark"><div class="wrap"><div class="stats"><% s.stats.forEach(st => { %><div class="stat"><div class="stat-val"><span data-count="<%= st.value %>"><%= st.value %></span><sup><%= st.suffix %></sup></div><p><%= st.label %></p></div><% }) %></div>
+<% if (s.about_values.length) { %><div class="values" style="margin-top:80px"><% s.about_values.forEach((v, i) => { %><div class="value rv"><span class="n">0<%= i + 1 %></span><h3><%= v.title %></h3><p><%= v.text %></p></div><% }) %></div><% } %>
+</div></section>
+<% } %>
+<% if (team.length) { %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><span class="kicker">The people</span><h2 class="h-section">Hands that <em>fold</em> your shirts.</h2></div>
+    <div class="team"><% team.forEach(m => { %><div class="member rv"><div class="ph"><% if (m.photo) { %><img src="<%= m.photo %>" alt="<%= m.name %>"><% } else { %><%= H.initials(m.name) %><% } %></div><b><%= m.name %></b><span><%= m.role %></span></div><% }) %></div>
+  </div>
+</section>
+<% } %>
+<section class="wrap"><div class="cta-band rv"><%- care('dry', 'k1') %><h2 class="h-section" style="max-width:16ch"><%- H.emph(s.cta_title) %></h2><p><%= s.cta_text %></p><a href="/book" class="btn"><%= s.cta_button %> <span class="btn-dot"><%- icon('arrow-up-right') %></span></a></div></section>
+<%- include('../partials/bottom') %>
